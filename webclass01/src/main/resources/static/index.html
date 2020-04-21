@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://code.jquery.com/jquery-3.5.0.min.js"></script>
+  </head>
+  <body>
+    <form method="get" action="/greeting">
+      <input name="say" />
+      <input name="to" />
+      <button>submit</button>
+    </form>
+    <br />
+    <input id="say" />
+    <input id="to" />
+    <button onclick="send()">submit</button>
+    <br />
+    <form method="post" action="/greeting2">
+      <input name="say2" />
+      <input name="to2" />
+      <button>submit</button>
+    </form>
+
+    <script>
+      function send() {
+        let say = $("#say").val();
+        let to = $("#to").val();
+        location.href = "greeting1/" + say + "/" + to;
+      }
+    </script>
+  </body>
+</html>
