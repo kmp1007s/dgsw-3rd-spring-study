@@ -7,7 +7,7 @@
     <script src="https://code.jquery.com/jquery-3.5.0.min.js"></script>
   </head>
   <body>
-    <form method="get" action="/calc">
+    <!-- <form method="get" action="/calc">
       <input type="text" name="num1" />
       <select name="operator">
         <option value="add">+</option>
@@ -17,26 +17,31 @@
       </select>
       <input type="text" name="num2" />
       <button>계산</button>
-    </form>
+    </form> -->
     <input type="text" id="num1" />
     <select id="operator">
-      <option value="add">+</option>
-      <option value="sub">-</option>
-      <option value="mul">*</option>
-      <option value="div">/</option>
+      <option value="plus">+</option>
+      <option value="minus">-</option>
+      <option value="multi">*</option>
+      <option value="divide">/</option>
     </select>
     <input type="text" id="num2" />
     <button onclick="send()">계산</button>
+    <span id="result"></span>
 
     <script>
-      function send() {
+      async function send() {
         const num1 = $("#num1").val();
         const num2 = $("#num2").val();
         const operator = $("#operator")[0];
         const selectedValue = operator.options[operator.selectedIndex].value;
 
         if (!(num1 && operator && num2)) return alert("blank inputs");
-        location.href = `/calc/${num1}/${selectedValue}/${num2}`;
+
+        const response = await $.get(
+          `/calculator/${num1}/${num2}/${selectedValue}`
+        );
+        $("#result").html(JSON.stringify(response));
       }
     </script>
   </body>
