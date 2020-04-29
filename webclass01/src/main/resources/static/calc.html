@@ -20,6 +20,7 @@
     </form> -->
     <input type="text" id="num1" />
     <select id="operator">
+      <option disabled selected value> -- select an option -- </option>
       <option value="plus">+</option>
       <option value="minus">-</option>
       <option value="multi">*</option>
@@ -36,12 +37,15 @@
         const operator = $("#operator")[0];
         const selectedValue = operator.options[operator.selectedIndex].value;
 
-        if (!(num1 && operator && num2)) return alert("blank inputs");
-
-        const response = await $.get(
-          `/calculator/${num1}/${num2}/${selectedValue}`
-        );
-        $("#result").html(JSON.stringify(response));
+        try {
+          const response = await $.get(
+            `/calculator/${num1}/${num2}/${selectedValue}`
+          );
+          $("#result").html(response + "");
+        } catch (ex) {
+          $("#result").html(`Bad Request: ${ex.status}`);
+          return;
+        }
       }
     </script>
   </body>

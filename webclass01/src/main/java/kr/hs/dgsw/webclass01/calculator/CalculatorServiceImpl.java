@@ -5,20 +5,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class CalculatorServiceImpl implements CalculatorService {
 
-  private boolean emptyParam(String[] params) {
-    for (String param : params) {
-      if (param.equals(""))
-        return true;
-    }
-    return false;
-  }
-
   @Override
   public int calculator(String num1, String num2, String operator) {
     int result = 0;
-
-    if (emptyParam(new String[] { num1, num2, operator }))
-      return result;
 
     switch (operator) {
       case "plus":
