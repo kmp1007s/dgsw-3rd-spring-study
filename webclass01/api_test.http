@@ -1,0 +1,29 @@
+GET http://localhost:8080/user
+Accept: application/json
+
+###
+GET http://localhost:8080/user/user1
+Accept: application/json
+
+###
+POST http://localhost:8080/user
+Content-Type: application/json
+
+{
+  "id": "user4",
+  "name": "서",
+  "email": "user4@dgsw"
+}
+
+###
+PUT http://localhost:8080/user/user4
+Content-Type: application/json
+
+{
+  "name": "연",
+  "email": "4@dgsw"
+}
+
+###
+DELETE http://localhost:8080/user/user3
+Accept: application/json
