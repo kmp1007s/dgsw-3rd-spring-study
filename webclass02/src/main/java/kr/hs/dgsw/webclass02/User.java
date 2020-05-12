@@ -1,4 +1,4 @@
-package kr.hs.dgsw.webclass01;
+package kr.hs.dgsw.webclass02;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
