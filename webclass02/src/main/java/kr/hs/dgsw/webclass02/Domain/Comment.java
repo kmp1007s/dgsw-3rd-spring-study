@@ -15,25 +15,33 @@ import lombok.NoArgsConstructor;
 @Entity
 @Data
 @NoArgsConstructor
-public class User {
+public class Comment {
   @Id
   @GeneratedValue
   private Long id;
-  private String userName;
-  private String email;
-  private String password;
+  private Long userId;
+  private String content;
   @CreationTimestamp
-  private LocalDateTime joined;
+  private LocalDateTime created;
   @UpdateTimestamp
   private LocalDateTime modified;
   private String storedPath;
   private String originalName;
 
-  public User(String userName, String email, String password, String storedPath, String originalName) {
-    this.userName = userName;
-    this.email = email;
-    this.password = password;
+  public Comment(Long userId, String content, String storedPath, String originalName) {
+    this.userId = userId;
+    this.content = content;
     this.storedPath = storedPath;
     this.originalName = originalName;
+  }
+
+  public Comment(Comment c) {
+    this.id = c.getId();
+    this.userId = c.getUserId();
+    this.content = c.getContent();
+    this.created = c.getCreated();
+    this.modified = c.getModified();
+    this.storedPath = c.getStoredPath();
+    this.originalName = c.getOriginalName();
   }
 }
