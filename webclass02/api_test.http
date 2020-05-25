@@ -1,29 +1,70 @@
-GET http://localhost:8080/user
+GET http://localhost:8080/comment/list
 Accept: application/json
 
 ###
-GET http://localhost:8080/user/user1
-Accept: application/json
-
-###
-POST http://localhost:8080/user
+POST http://localhost:8080/user/add
 Content-Type: application/json
 
 {
-  "id": "user4",
-  "name": "서",
-  "email": "user4@dgsw"
+  "userName": "bbb",
+  "email": "bbb@dgsw"
 }
 
 ###
-PUT http://localhost:8080/user/user4
+GET http://localhost:8080/user/list
+Accept: application/json
+
+###
+GET http://localhost:8080/user/view/1
+Accept: application/json
+
+###
+PUT http://localhost:8080/user/update/1
 Content-Type: application/json
 
 {
-  "name": "연",
-  "email": "4@dgsw"
+  "email": "aaa@dgswww"
 }
 
 ###
-DELETE http://localhost:8080/user/user3
+DELETE http://localhost:8080/user/delete/3
 Accept: application/json
+
+###
+GET http://localhost:8080/comment/list
+Accept: application/json
+
+###
+GET http://localhost:8080/comment/view/2
+Accept: application/json
+
+###
+PUT http://localhost:8080/comment/update/2
+Content-Type: application/json
+
+{
+  "userId": 1,
+  "content": "hi"
+}
+
+###
+DELETE http://localhost:8080/comment/remove/4
+Accept: application/json
+
+###
+POST http://localhost:8080/comment/add
+Content-Type: application/json
+
+{
+  "userId": 5,
+  "content": "hello~"
+}
+
+###
+POST http://localhost:8080/user/login
+Content-Type: application/json
+
+{
+  "email": "aaa@dgsw",
+  "password": "1234"
+}

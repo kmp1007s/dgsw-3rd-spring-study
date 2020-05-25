@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Title</title>
+    <link rel="stylesheet" href="./_index.css" />
+  </head>
+  <body>
+    <div>
+      <h1>회원 가입</h1>
+      <p>username <input type="text" /></p>
+      <p>email <input type="text" /></p>
+      <p>password <input type="text" /></p>
+      <p>
+        <button>확인</button>
+        <button>취소</button>
+      </p>
+    </div>
+    <div>
+      <h1>댓글</h1>
+      content <input type="text" />
+      <button>확인</button>
+    </div>
+    <div>
+      <h1>회원 목록</h1>
+      <table>
+        <tr>
+          <td>aaa</td>
+          <td>aaa@dgsw</td>
+          <td>1234</td>
+          <td>
+            <input type="file" />
+            <span class="invisible">person.png</span>
+          </td>
+          <td class="invisible">C:...</td>
+          <td>
+            <button>파일 업로드</button>
+            <button class="invisible">수정</button>
+          </td>
+          <td>
+            <button>취소</button>
+            <button class="invisible">삭제</button>
+          </td>
+          <td>
+            <button>이미지</button>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <div>
+      <h1>댓글 목록</h1>
+      <table class="comment_table">
+        <tr>
+          <td>aaa</td>
+          <td>hi there1</td>
+          <td>
+            <button>수정</button>
+            <button>삭제</button>
+          </td>
+        </tr>
+        <tr>
+          <td>aaa</td>
+          <td>hi there2</td>
+          <td>
+            <button>수정</button>
+            <button>삭제</button>
+          </td>
+        </tr>
+        <tr>
+          <td>aaa</td>
+          <td>hi there3</td>
+          <td>
+            <button>수정</button>
+            <button>삭제</button>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <button id="login_btn">로그인</button>
+    <div class="login_modal">
+      <div>로그인</div>
+      <input type="text" placeholder="사용자 아이디" />
+      <input type="text" placeholder="패스워드" />
+      <div>
+        <button>확인</button>
+        <button id="login_cancel_btn">취소</button>
+      </div>
+    </div>
+    <script>
+      const loginModal = document.querySelector(".login_modal");
+      const loginBtn = document.querySelector("#login_btn");
+      const loginCancelBtn = document.querySelector("#login_cancel_btn");
+
+      loginBtn.addEventListener("click", () => {
+        loginModal.classList.add("visible");
+      });
+
+      loginCancelBtn.addEventListener("click", () => {
+        loginModal.classList.remove("visible");
+      });
+    </script>
+  </body>
+</html>
