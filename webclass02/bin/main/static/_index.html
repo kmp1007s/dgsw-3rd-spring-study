@@ -3,107 +3,475 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Title</title>
+    <title>SNS</title>
     <link rel="stylesheet" href="./_index.css" />
-  </head>
-  <body>
-    <div>
-      <h1>회원 가입</h1>
-      <p>username <input type="text" /></p>
-      <p>email <input type="text" /></p>
-      <p>password <input type="text" /></p>
-      <p>
-        <button>확인</button>
-        <button>취소</button>
-      </p>
-    </div>
-    <div>
-      <h1>댓글</h1>
-      content <input type="text" />
-      <button>확인</button>
-    </div>
-    <div>
-      <h1>회원 목록</h1>
-      <table>
-        <tr>
-          <td>aaa</td>
-          <td>aaa@dgsw</td>
-          <td>1234</td>
-          <td>
-            <input type="file" />
-            <span class="invisible">person.png</span>
-          </td>
-          <td class="invisible">C:...</td>
-          <td>
-            <button>파일 업로드</button>
-            <button class="invisible">수정</button>
-          </td>
-          <td>
-            <button>취소</button>
-            <button class="invisible">삭제</button>
-          </td>
-          <td>
-            <button>이미지</button>
-          </td>
-        </tr>
-      </table>
-    </div>
-    <div>
-      <h1>댓글 목록</h1>
-      <table class="comment_table">
-        <tr>
-          <td>aaa</td>
-          <td>hi there1</td>
-          <td>
-            <button>수정</button>
-            <button>삭제</button>
-          </td>
-        </tr>
-        <tr>
-          <td>aaa</td>
-          <td>hi there2</td>
-          <td>
-            <button>수정</button>
-            <button>삭제</button>
-          </td>
-        </tr>
-        <tr>
-          <td>aaa</td>
-          <td>hi there3</td>
-          <td>
-            <button>수정</button>
-            <button>삭제</button>
-          </td>
-        </tr>
-      </table>
-    </div>
-    <button id="login_btn">로그인</button>
-    <div class="login_modal">
-      <div>로그인</div>
-      <input type="text" placeholder="사용자 아이디" />
-      <input type="text" placeholder="패스워드" />
-      <div>
-        <button>확인</button>
-        <button id="login_cancel_btn">취소</button>
-      </div>
-    </div>
     <script
       src="https://code.jquery.com/jquery-3.5.1.min.js"
       integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0="
       crossorigin="anonymous"
     ></script>
+  </head>
+  <body>
+    <div>
+      <h1>회원 가입</h1>
+      <p>
+        username
+        <input type="text" id="input_reg_username" />
+      </p>
+      <p>
+        email
+        <input type="text" id="input_reg_email" />
+      </p>
+      <p>
+        password
+        <input type="text" id="input_reg_password" />
+      </p>
+      <p>
+        <button id="btn_register_ok">확인</button>
+        <button id="btn_register_no">취소</button>
+      </p>
+    </div>
+    <div>
+      <h1>댓글</h1>
+      content
+      <input type="text" id="input_comment" />
+      <button id="btn_add_comment">확인</button>
+    </div>
+    <div>
+      <h1>회원 목록</h1>
+      <table id="user_list">
+        <td>
+          <span class="loading">Loading...</span>
+        </td>
+      </table>
+    </div>
+    <div>
+      <h1>댓글 목록</h1>
+      <table id="comment_list">
+        <td>
+          <span class="loading">Loading...</span>
+        </td>
+      </table>
+    </div>
+    <button id="btn_login">로그인</button>
+    <div class="login_modal">
+      <div>로그인</div>
+      <input type="text" placeholder="사용자 아이디" id="input_login_email" />
+      <input type="text" placeholder="패스워드" id="input_login_password" />
+      <div>
+        <button id="btn_login_ok">확인</button>
+        <button id="btn_login_no">취소</button>
+      </div>
+    </div>
+
     <script>
       const loginModal = $(".login_modal")[0];
-      const loginBtn = $("#login_btn")[0];
-      const loginCancelBtn = $("#login_cancel_btn")[0];
 
-      loginBtn.addEventListener("click", () => {
+      const inputRegUserName = $("#input_reg_username");
+      const inputRegEmail = $("#input_reg_email");
+      const inputRegPwd = $("#input_reg_password");
+
+      const loginInputEmail = $("#input_login_email");
+      const loginInputPassword = $("#input_login_password");
+
+      const inputComment = $("#input_comment");
+
+      let userId = null;
+    </script>
+    <script>
+      const ajax = (() => {
+        const server = "http://localhost:8080";
+        return {
+          get: (endpoint, success) => {
+            $.ajax({
+              url: server + endpoint,
+              method: "GET",
+              dataType: "json",
+              success,
+            });
+          },
+          post: (endpoint, data, success) => {
+            $.ajax({
+              url: server + endpoint,
+              method: "POST",
+              contentType: "application/json",
+              data: JSON.stringify(data),
+              success,
+            });
+          },
+          put: (endpoint, data, success) => {
+            $.ajax({
+              url: server + endpoint,
+              method: "PUT",
+              contentType: "application/json",
+              data: JSON.stringify(data),
+              success,
+            });
+          },
+          delete: (endpoint, success) => {
+            $.ajax({
+              url: server + endpoint,
+              method: "DELETE",
+              dataType: "json",
+              success,
+            });
+          },
+          postFormData: (endpoint, data, success) => {
+            $.ajax({
+              url: server + endpoint,
+              method: "POST",
+              processData: false,
+              contentType: false,
+              data,
+              success,
+            });
+          },
+        };
+      })();
+
+      function init() {
+        $("#btn_register_ok").click(register); // 회원 가입
+        $("#btn_register_no").click(registerCancel); // 회원 가입 취소
+
+        $("#btn_add_comment").click(addComment); // 댓글 추가
+
+        $("#btn_login").click(showLoginModal); // 로그인 모달
+        $("#btn_login_no").click(hideLoginModal); // 로그인 취소
+        $("#btn_login_ok").click(login); // 로그인
+
+        loadUI();
+      }
+
+      function loadUI() {
+        getUserList();
+        getCommentList();
+      }
+
+      function getUserList() {
+        ajax.get("/user/list", (res) => {
+          userView.list(res);
+        });
+      }
+
+      function getCommentList() {
+        ajax.get("/comment/list", (res) => {
+          commentView.list(res);
+        });
+      }
+
+      const userView = (() => {
+        const withFileEls = (userId) => $(`#user_${userId} .with_file`);
+        const withOutFiles = (userId) => $(`#user_${userId} .without_file`);
+
+        return {
+          list: (userList) => {
+            console.log(userList);
+
+            const userListContainer = $("#user_list");
+
+            userListContainer.empty();
+
+            for (let user of userList) {
+              const userEl = `
+                  <tr id="user_${user.id}">
+                    <td>${user.userName}</td>
+                    <td>${user.email}</td>
+                    <td>${user.password}</td>
+                    <td>
+                      <input
+                        type="file"
+                        name="image"
+                        accept="image/jpeg, image/png, image/gif"
+                        class="without_file"
+                      />
+                      <span class="with_file">${
+                        user.originalName || "No File"
+                      }</span>
+                    </td>
+                    <td>
+                      <span class="with_file">${
+                        user.storedPath || "No File"
+                      }</span>
+                    </td>
+                    <td>
+                      <button
+                        id="btn_file_upload_${user.id}"
+                        class="without_file"
+                        onclick="fileUpload(this)">
+                        파일 업로드
+                      </button>
+                      <button
+                        id="btn_file_modify_${user.id}"
+                        class="with_file"
+                        onclick="fileModify(this)"
+                      >
+                        수정
+                      </button>
+                    </td>
+                    <td>
+                      <button
+                        id="btn_file_cancel_${user.id}"
+                        class="without_file"
+                        onclick="uploadCancel(this)">
+                        취소
+                      </button>
+                      <button
+                        id="btn_user_delete_${user.id}"
+                        class="with_file"
+                        onclick="deleteUser(this)">
+                        삭제
+                        </button>
+                    </td>
+                    <td>
+                      <button
+                        id="btn_file_image_${user.id}"
+                        onclick="showImage(this)">
+                        이미지
+                      </button>
+                    </td>
+                  </tr>
+                `;
+
+              userListContainer.append(userEl);
+
+              if (user.originalName && user.storedPath)
+                userView.showWithFiles(user.id);
+              else userView.showWithOutFiles(user.id);
+            }
+          },
+          showWithFiles: (userId) => {
+            withOutFiles(userId).removeClass("visible").addClass("invisible");
+            withFileEls(userId).removeClass("invisible").addClass("visible");
+          },
+          showWithOutFiles: (userId) => {
+            withFileEls(userId).removeClass("visible").addClass("invisible");
+            withOutFiles(userId).removeClass("invisible").addClass("visible");
+          },
+        };
+      })();
+
+      const commentView = (() => {
+        return {
+          list: (commentList) => {
+            console.log(commentList);
+            const commentListContainer = $("#comment_list");
+
+            commentListContainer.empty();
+
+            for (let comment of commentList) {
+              const commentEl = `
+                  <tr id="comment_${comment.id}">
+                    <td>
+                      <span>${comment.userName}</span>
+                    </td>
+                    <td>
+                      <span class="comment_read">${comment.content}</span>
+                      <input class="comment_modify" type="text"/>
+                    </td>
+                    <td>
+                      <button
+                        id="btn_comment_modify_${comment.id}"
+                        class="comment_read"
+                        onclick="commentModify(this)">
+                        수정
+                      </button>
+                      <button
+                        id="btn_comment_delete_${comment.id}"
+                        class="comment_read"
+                        onclick="commentDelete(this)">
+                        삭제
+                      </button>
+                      <button
+                        id="btn_comment_modify_ok_${comment.id}"
+                        class="comment_modify"
+                        onclick="commentModifyOk(this)">
+                        완료
+                      </button>
+                      <button
+                        id="btn_comment_modify_cancel_${comment.id}"
+                        class="comment_modify"
+                        onclick="commentModifyCancel(this)">
+                        취소
+                      </button>
+                    </td>
+                  </tr>
+                `;
+
+              commentListContainer.append(commentEl);
+            }
+            $("#comment_list .comment_modify").addClass("invisible");
+          },
+          readMode: (commentId) => {
+            const modeRead = $(`#comment_${commentId} .comment_read`);
+            const modeModify = $(`#comment_${commentId} .comment_modify`);
+
+            modeRead.removeClass("invisible").addClass("visible");
+            modeModify.removeClass("visible").addClass("invisible");
+          },
+          modifyMode: (commentId) => {
+            const modeRead = $(`#comment_${commentId} .comment_read`);
+            const modeModify = $(`#comment_${commentId} .comment_modify`);
+
+            modeModify.removeClass("invisible").addClass("visible");
+            modeRead.removeClass("visible").addClass("invisible");
+          },
+        };
+      })();
+
+      function register() {
+        const userName = inputRegUserName.val().trim();
+        const email = inputRegEmail.val().trim();
+        const password = inputRegPwd.val().trim();
+
+        ajax.post("/user/add", { userName, email, password }, (res) => {
+          console.log(res);
+          userId = res.id;
+          alert(`회원가입 성공 ID: ${userId}`);
+          getUserList();
+        });
+      }
+
+      function registerCancel() {
+        inputRegUserName.val("");
+        inputRegEmail.val("");
+        inputRegPwd.val("");
+      }
+
+      function showLoginModal() {
         loginModal.classList.add("visible");
-      });
+      }
 
-      loginCancelBtn.addEventListener("click", () => {
+      function hideLoginModal() {
+        loginInputEmail.val("");
+        loginInputPassword.val("");
+
         loginModal.classList.remove("visible");
-      });
+      }
+
+      function login() {
+        const email = loginInputEmail.val().trim();
+        const password = loginInputPassword.val().trim();
+
+        ajax.post("/user/login", { email, password }, (res) => {
+          console.log(res);
+          userId = res.id;
+
+          alert(`${res.userName} 로그인 성공, ID: ${userId}`);
+          hideLoginModal();
+        });
+      }
+
+      function addComment() {
+        const content = inputComment.val().trim();
+
+        ajax.post(
+          "/comment/add",
+          {
+            userId,
+            content,
+          },
+          (res) => {
+            console.log(res);
+            alert("댓글 추가 완료");
+            getCommentList();
+          }
+        );
+      }
+
+      function commentModify(clicked) {
+        const commentId = clicked.id.split("_")[3];
+        commentView.modifyMode(commentId);
+      }
+
+      function commentModifyOk(clicked) {
+        const commentId = clicked.id.split("_")[4];
+        const inputComment = $(`#comment_${commentId} input[type="text"]`);
+
+        ajax.put(
+          `/comment/update/${commentId}`,
+          {
+            userId,
+            content: inputComment.val().trim(),
+          },
+          (res) => {
+            console.log(res);
+            getCommentList();
+          }
+        );
+      }
+
+      function commentModifyCancel(clicked) {
+        const commentId = clicked.id.split("_")[4];
+        commentView.readMode(commentId);
+      }
+
+      function commentDelete(clicked) {
+        const commentId = clicked.id.split("_")[3];
+
+        ajax.delete(`/comment/remove/${commentId}`, (res) => {
+          getCommentList();
+        });
+      }
+
+      function fileUpload(clicked) {
+        const userId = clicked.id.split("_")[3];
+
+        const fileEl = $(`#user_${userId} input[type="file"]`)[0];
+        const file = fileEl.files[0];
+
+        const formData = new FormData();
+        formData.append("srcFile", file);
+
+        for (let value of formData.values()) {
+          console.log(value);
+        }
+
+        ajax.postFormData("/attachment", formData, (res) => {
+          console.log(res);
+          alert("파일 업로드 완료");
+          ajax.put(
+            `/user/update/${userId}`,
+            {
+              originalName: res.originalName,
+              storedPath: res.storedPath,
+            },
+            (res) => {
+              console.log(res);
+              getUserList();
+            }
+          );
+        });
+      }
+
+      function fileModify(clicked) {
+        const userId = clicked.id.split("_")[3];
+        userView.showWithOutFiles(userId);
+      }
+
+      function uploadCancel(clicked) {
+        const userId = clicked.id.split("_")[3];
+        userView.showWithFiles(userId);
+      }
+
+      function deleteUser(clicked) {
+        const userId = clicked.id.split("_")[3];
+
+        ajax.delete(`/user/delete/${userId}`, (res) => {
+          console.log(res);
+          getUserList();
+        });
+      }
+
+      function showImage(clicked) {
+        const userId = clicked.id.split("_")[3];
+        console.log(userId);
+
+        ajax.get(`/user/view/${userId}`, (res) => {
+          window.open(`http://localhost:8080/${res.storedPath}`);
+        });
+      }
+
+      init();
     </script>
   </body>
 </html>

@@ -24,8 +24,9 @@ public class CommentServiceImpl implements CommentService {
 
   @PostConstruct
   private void init() {
-    User u = userRepository.save(new User("aaa", "aaa@dgsw", "1234", "C:/Users/saehan/Desktop/test", "originalName"));
-    commentRepository.save(new Comment(u.getId(), "Hi 1", "C:/Users/saehan/Desktop/test", "originalName"));
+    User u = userRepository
+        .save(new User("aaa", "aaa@dgsw", "1234", "C:/Users/saehan/Desktop/spring_upload", "originalName"));
+    commentRepository.save(new Comment(u.getId(), "Hi 1", "C:/Users/saehan/Desktop/spring_upload", "originalName"));
   }
 
   @Override

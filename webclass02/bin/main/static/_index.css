@@ -5,11 +5,11 @@ body {
 
 table {
   width: 100%;
-}
-table {
   border-collapse: collapse;
 }
+
 table tr {
+  width: 100%;
   border-bottom: 2px solid lightgray;
 }
 
@@ -48,5 +48,5 @@ table tr {
 }
 
 .invisible {
-  display: none;
+  visibility: hidden;
 }
