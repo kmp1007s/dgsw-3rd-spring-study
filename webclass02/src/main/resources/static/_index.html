@@ -466,9 +466,7 @@
         const userId = clicked.id.split("_")[3];
         console.log(userId);
 
-        ajax.get(`/user/view/${userId}`, (res) => {
-          window.open(`http://localhost:8080/${res.storedPath}`);
-        });
+        window.location = `http://localhost:8080/attachment/user/${userId}`;
       }
 
       init();
