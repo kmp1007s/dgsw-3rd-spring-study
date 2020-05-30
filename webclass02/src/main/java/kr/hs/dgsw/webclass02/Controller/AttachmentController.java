@@ -38,7 +38,7 @@ public class AttachmentController {
 
   @PostMapping("/attachment")
   public AttachmentProtocol upload(@RequestPart MultipartFile srcFile) {
-    String destFileName = "E:/saehan/3rd-web/dgsw_3rd_spring_study/webclass02/src/main/resources/static/"
+    String destFileName = "E:/saehan/3rd-web/dgsw_3rd_spring_study/webclass02/src/main/resources/static/image/"
         + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd/")) + UUID.randomUUID().toString() + "_"
         + srcFile.getOriginalFilename();
 
