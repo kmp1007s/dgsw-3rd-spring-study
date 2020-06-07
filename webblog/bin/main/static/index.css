@@ -17,3 +17,15 @@ th {
 tr:nth-child(even) {
   background-color: #dddddd;
 }
+
+td:hover {
+  cursor: pointer;
+}
+
+.invisible {
+  visibility: collapse;
+}
+
+table td.cannot_modify {
+  cursor: not-allowed;
+}

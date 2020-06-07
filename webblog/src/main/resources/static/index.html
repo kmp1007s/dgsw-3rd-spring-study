@@ -34,7 +34,7 @@
         <span>phone</span>
         <input id="input_reg_phone" type="text" />
       </p>
-      <button onclick="requestRegister()">가입</button>
+      <button onclick="onRegisterBtnClicked()">가입</button>
     </div>
     <div>
       <h1>로그인</h1>
@@ -46,7 +46,7 @@
         <span>PWD</span>
         <input type="password" />
       </p>
-      <button onclick="requestLogin()">로그인</button>
+      <button onclick="onLoginBtnClicked()">로그인</button>
     </div>
     <div>
       <h1>회원 리스트</h1>
@@ -58,6 +58,8 @@
             <th>Name</th>
             <th>E-mail</th>
             <th>Phone</th>
+            <th>Update</th>
+            <th>Delete</th>
           </tr>
         </thead>
       </table>
@@ -72,7 +74,7 @@
         <span>내용</span>
         <textarea id="input_post_content"></textarea>
       </p>
-      <button onclick="requestNewPost()">작성</button>
+      <button onclick="onCreatePostBtnClicked()">작성</button>
     </div>
     <div>
       <h1>글 리스트</h1>
@@ -83,6 +85,9 @@
             <th>Title</th>
             <th>Content</th>
             <th>Created</th>
+            <th>Modified</th>
+            <th>Update</th>
+            <th>Delete</th>
           </tr>
         </thead>
       </table>

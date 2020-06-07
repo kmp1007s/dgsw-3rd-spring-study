@@ -98,6 +98,20 @@ const api = {
       });
     });
   },
+  updateUser: function (userId, data) {
+    return new Promise((resolve, reject) => {
+      ajax.put(`/user/update/${userId}`, data, (res) => {
+        resolve(res);
+      });
+    });
+  },
+  updatePost: function (postId, data) {
+    return new Promise((resolve, reject) => {
+      ajax.put(`/post/update/${postId}`, data, (res) => {
+        resolve(res);
+      });
+    });
+  },
   deleteUser: function (userId) {
     return new Promise((resolve, reject) => {
       ajax.delete(`/user/delete/${userId}`, (res) => {
@@ -122,7 +136,7 @@ function init() {
   getPostLists();
 }
 
-async function requestRegister() {
+async function onRegisterBtnClicked() {
   const data = {
     account: inputRegId.val().trim(),
     password: inputRegPwd.val().trim(),
@@ -138,6 +152,8 @@ async function requestRegister() {
 
   getUserLists();
 }
+
+async function onLoginBtnClicked() {}
 
 function updateUserListView(users) {
   $("#list_user>tr").remove();
@@ -160,6 +176,12 @@ function updateUserListView(users) {
       <td>
         <span>${user.created}</span>
       </td>
+      <td>
+        <button onclick="onUpdateUserBtnClicked($(this).closest('tr'))">수정</button>
+      </td>
+      <td>
+        <button onclick="onDeleteUserBtnClicked($(this).closest('tr'))">삭제</button>
+      </td>
     </tr>
     `);
   }
@@ -173,17 +195,28 @@ async function updatePostListView(posts) {
 
     $("#list_post").append(`
     <tr id="${post.id}">
-      <td>
+      <td class="cannot_modify">
         <span>${account}</span>
       </td>
-      <td>
+      <td onclick="togglePostMode(this)">
         <span>${post.title}</span>
+        <input type="text" class="invisible"/>
       </td>
-      <td>
+      <td onclick="togglePostMode(this)">
         <span>${post.content}</span>
+        <input type="text" class="invisible"/>
+      </td>
+      <td class="cannot_modify">
+        <span>${post.created}</span>
+      </td>
+      <td class="cannot_modify">
+        <span>${post.modified}</span>
       </td>
       <td>
-        <span>${post.created}</span>
+        <button onclick="onUpdatePostBtnClicked($(this).closest('tr'))">완료</button>
+      </td>
+      <td>
+        <button onclick="onDeletePostBtnClicked($(this).closest('tr'))">삭제</button>
       </td>
     </tr>
     `);
@@ -204,7 +237,7 @@ async function getPostLists() {
   updatePostListView(posts);
 }
 
-async function requestNewPost() {
+async function onCreatePostBtnClicked() {
   const data = {
     userId: currentUserId,
     title: inputPostTitle.val().trim(),
@@ -215,4 +248,75 @@ async function requestNewPost() {
   console.log(newPost);
 
   getPostLists();
+}
+
+async function onUpdateUserBtnClicked(parentTr) {
+  const id = parentTr.attr("id");
+  console.log(id);
+}
+
+async function onDeleteUserBtnClicked(parentTr) {
+  const id = parentTr.attr("id");
+  console.log(id);
+
+  const response = await api.deleteUser(id);
+  console.log(response);
+  getUserLists();
+}
+
+async function onUpdatePostBtnClicked(parentTr) {
+  const id = parentTr.attr("id");
+  console.log(id);
+
+  const values = parentTr.find("td :not(button)"); // 첫 번째 엘리먼트는 수정 불가로 제외
+  const datas = [];
+
+  console.log(values);
+
+  for (let value of values) {
+    value = $(value);
+
+    if (value.parent().hasClass("cannot_modify") || value.hasClass("invisible"))
+      continue;
+
+    if (value.is("input")) datas.push(value.val().trim());
+    else datas.push(value.html());
+  }
+
+  console.log(datas);
+
+  const data = {
+    userId: currentUserId,
+    title: datas[0],
+    content: datas[1],
+  };
+
+  console.log(data);
+
+  const updated = await api.updatePost(id, data);
+  console.log(updated);
+
+  getPostLists();
+}
+
+async function onDeletePostBtnClicked(parentTr) {
+  const id = parentTr.attr("id");
+  console.log(id);
+
+  const response = await api.deletePost(id);
+  console.log(response);
+  getPostLists();
+}
+
+function togglePostMode(clicked) {
+  clicked = $(clicked);
+  console.log(clicked);
+
+  const childrenSpan = clicked.children().eq(0);
+  const childrenInput = clicked.children().eq(1);
+
+  childrenSpan.toggleClass("invisible");
+  childrenInput.toggleClass("invisible");
+
+  if (childrenSpan.hasClass("invisible")) childrenInput.focus();
 }
