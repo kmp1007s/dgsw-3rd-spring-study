@@ -37,16 +37,20 @@
       <button onclick="onRegisterBtnClicked()">가입</button>
     </div>
     <div>
-      <h1>로그인</h1>
-      <p>
-        <span>ID</span>
-        <input type="text" />
-      </p>
-      <p>
-        <span>PWD</span>
-        <input type="password" />
-      </p>
-      <button onclick="onLoginBtnClicked()">로그인</button>
+      <h1>선택한 회원 정보</h1>
+      <table id="selected_user">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>E-mail</th>
+            <th>Phone</th>
+            <th>Created</th>
+            <th>Update</th>
+            <th>Delete</th>
+          </tr>
+        </thead>
+      </table>
     </div>
     <div>
       <h1>회원 리스트</h1>
@@ -54,12 +58,11 @@
         <thead>
           <tr>
             <th>ID</th>
-            <th>PWD</th>
             <th>Name</th>
             <th>E-mail</th>
             <th>Phone</th>
-            <th>Update</th>
-            <th>Delete</th>
+            <th>Created</th>
+            <th>View</th>
           </tr>
         </thead>
       </table>
@@ -77,8 +80,22 @@
       <button onclick="onCreatePostBtnClicked()">작성</button>
     </div>
     <div>
-      <h1>글 리스트</h1>
-      <table id="list_post">
+      <h1>사용자가 작성한 글</h1>
+      <table id="post_by_user">
+        <thead>
+          <tr>
+            <th>UserId</th>
+            <th>Title</th>
+            <th>Content</th>
+            <th>Created</th>
+            <th>Modified</th>
+          </tr>
+        </thead>
+      </table>
+    </div>
+    <div>
+      <h1>선택한 글 읽기</h1>
+      <table id="selected_post">
         <thead>
           <tr>
             <th>UserId</th>
@@ -88,6 +105,20 @@
             <th>Modified</th>
             <th>Update</th>
             <th>Delete</th>
+          </tr>
+        </thead>
+      </table>
+    </div>
+    <div>
+      <h1>글 리스트</h1>
+      <table id="list_post">
+        <thead>
+          <tr>
+            <th>UserId</th>
+            <th>Title</th>
+            <th>Content</th>
+            <th>Created</th>
+            <th>Modified</th>
           </tr>
         </thead>
       </table>

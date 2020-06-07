@@ -1,4 +1,4 @@
-console.log("script load()");
+console.log("script load");
 
 const server = "http://localhost:8080";
 const contentType = "application/json";
@@ -84,6 +84,20 @@ const api = {
       });
     });
   },
+  getPost: function (postId) {
+    return new Promise((resolve, reject) => {
+      ajax.get(`/post/read/${postId}`, (res) => {
+        resolve(res);
+      });
+    });
+  },
+  getPostByUserId: function (userId) {
+    return new Promise((resolve, reject) => {
+      ajax.get(`/post/read/user/${userId}`, (res) => {
+        resolve(res);
+      });
+    });
+  },
   getPostLists: function () {
     return new Promise((resolve, reject) => {
       ajax.get("/post/read", (res) => {
@@ -153,7 +167,102 @@ async function onRegisterBtnClicked() {
   getUserLists();
 }
 
-async function onLoginBtnClicked() {}
+async function updateSelectedUserView(user) {
+  $("#selected_user>tr").remove();
+
+  if (!user) return;
+
+  $("#selected_user").append(`
+  <tr id="${user.id}">
+  <td class="cannot_modify">
+    <span>${user.account}</span>
+  </td>
+  <td onclick="toggleWritingMode(this)">
+    <span>${user.name}</span>
+    <input type="text" class="invisible"/>
+  </td>
+  <td onclick="toggleWritingMode(this)">
+    <span>${user.email}</span>
+    <input type="text" class="invisible"/>
+  </td>
+  <td onclick="toggleWritingMode(this)">
+    <span>${user.phone}</span>
+    <input type="text" class="invisible"/>
+  </td>
+  <td class="cannot_modify">
+    <span>${user.created}</span>
+  </td>
+  <td>
+    <button onclick="onUpdateUserBtnClicked($(this).closest('tr'))">완료</button>
+  </td>
+  <td>
+    <button onclick="onDeleteUserBtnClicked($(this).closest('tr'))">삭제</button>
+  </td>
+</tr>
+  `);
+}
+
+async function updatePostByUserView(post) {
+  const { account } = (await api.getUser(post.userId)).data;
+
+  $("#post_by_user>tr").remove();
+
+  $("#post_by_user").append(`
+  <tr id="${post.id}">
+    <td>
+      <span>${account}</span>
+    </td>
+    <td>
+      <span>${post.title}</span>
+    </td>
+    <td>
+      <span>${post.content}</span>
+    </td>
+    <td>
+      <span>${post.created}</span>
+    </td>
+    <td>
+      <span>${post.modified}</span>
+    </td>
+  </tr>
+  `);
+}
+
+async function updateSelectedPostView(post) {
+  const { account } = (await api.getUser(post.userId)).data;
+
+  $("#selected_post>tr").remove();
+
+  if (!post) return;
+
+  $("#selected_post").append(`
+  <tr id="${post.id}">
+      <td class="cannot_modify">
+        <span>${account}</span>
+      </td>
+      <td onclick="toggleWritingMode(this)">
+        <span>${post.title}</span>
+        <input type="text" class="invisible"/>
+      </td>
+      <td onclick="toggleWritingMode(this)">
+        <span>${post.content}</span>
+        <input type="text" class="invisible"/>
+      </td>
+      <td class="cannot_modify">
+        <span>${post.created}</span>
+      </td>
+      <td class="cannot_modify">
+        <span>${post.modified}</span>
+      </td>
+      <td>
+        <button onclick="onUpdatePostBtnClicked($(this).closest('tr'))">완료</button>
+      </td>
+      <td>
+        <button onclick="onDeletePostBtnClicked($(this).closest('tr'))">삭제</button>
+      </td>
+    </tr>
+  `);
+}
 
 function updateUserListView(users) {
   $("#list_user>tr").remove();
@@ -161,7 +270,7 @@ function updateUserListView(users) {
   for (let user of users) {
     $("#list_user").append(`
     <tr id="${user.id}">
-      <td>
+      <td onclick="onViewUserBtnClicked($(this).closest('tr'))">
         <span>${user.account}</span>
       </td>
       <td>
@@ -177,10 +286,7 @@ function updateUserListView(users) {
         <span>${user.created}</span>
       </td>
       <td>
-        <button onclick="onUpdateUserBtnClicked($(this).closest('tr'))">수정</button>
-      </td>
-      <td>
-        <button onclick="onDeleteUserBtnClicked($(this).closest('tr'))">삭제</button>
+        <button onclick="onViewPostByUserBtnClicked($(this).closest('tr'))">작성 글 보기</button>
       </td>
     </tr>
     `);
@@ -195,28 +301,20 @@ async function updatePostListView(posts) {
 
     $("#list_post").append(`
     <tr id="${post.id}">
-      <td class="cannot_modify">
+      <td>
         <span>${account}</span>
       </td>
-      <td onclick="togglePostMode(this)">
+      <td onclick="onViewPostBtnClicked($(this).closest('tr'))">
         <span>${post.title}</span>
-        <input type="text" class="invisible"/>
       </td>
-      <td onclick="togglePostMode(this)">
+      <td>
         <span>${post.content}</span>
-        <input type="text" class="invisible"/>
       </td>
-      <td class="cannot_modify">
+      <td>
         <span>${post.created}</span>
       </td>
-      <td class="cannot_modify">
+      <td>
         <span>${post.modified}</span>
-      </td>
-      <td>
-        <button onclick="onUpdatePostBtnClicked($(this).closest('tr'))">완료</button>
-      </td>
-      <td>
-        <button onclick="onDeletePostBtnClicked($(this).closest('tr'))">삭제</button>
       </td>
     </tr>
     `);
@@ -253,22 +351,44 @@ async function onCreatePostBtnClicked() {
 async function onUpdateUserBtnClicked(parentTr) {
   const id = parentTr.attr("id");
   console.log(id);
-}
 
-async function onDeleteUserBtnClicked(parentTr) {
-  const id = parentTr.attr("id");
-  console.log(id);
+  const values = parentTr.find("td :not(button)");
+  const datas = [];
 
-  const response = await api.deleteUser(id);
-  console.log(response);
+  console.log(values);
+
+  for (let value of values) {
+    value = $(value);
+
+    if (value.parent().hasClass("cannot_modify") || value.hasClass("invisible"))
+      continue;
+
+    if (value.is("input")) datas.push(value.val().trim());
+    else datas.push(value.html());
+  }
+
+  console.log(datas);
+
+  const data = {
+    name: datas[0],
+    email: datas[1],
+    phone: datas[2],
+  };
+
+  console.log(data);
+
+  const updated = (await api.updateUser(id, data)).data;
+  console.log(updated);
+
   getUserLists();
+  updateSelectedUserView(updated);
 }
 
 async function onUpdatePostBtnClicked(parentTr) {
   const id = parentTr.attr("id");
   console.log(id);
 
-  const values = parentTr.find("td :not(button)"); // 첫 번째 엘리먼트는 수정 불가로 제외
+  const values = parentTr.find("td :not(button)");
   const datas = [];
 
   console.log(values);
@@ -293,10 +413,21 @@ async function onUpdatePostBtnClicked(parentTr) {
 
   console.log(data);
 
-  const updated = await api.updatePost(id, data);
+  const updated = (await api.updatePost(id, data)).data;
   console.log(updated);
 
   getPostLists();
+  updateSelectedPostView(updated);
+}
+
+async function onDeleteUserBtnClicked(parentTr) {
+  const id = parentTr.attr("id");
+  console.log(id);
+
+  const response = await api.deleteUser(id);
+  console.log(response);
+  getUserLists();
+  updateSelectedUserView();
 }
 
 async function onDeletePostBtnClicked(parentTr) {
@@ -306,9 +437,10 @@ async function onDeletePostBtnClicked(parentTr) {
   const response = await api.deletePost(id);
   console.log(response);
   getPostLists();
+  updateSelectedPostView();
 }
 
-function togglePostMode(clicked) {
+function toggleWritingMode(clicked) {
   clicked = $(clicked);
   console.log(clicked);
 
@@ -319,4 +451,34 @@ function togglePostMode(clicked) {
   childrenInput.toggleClass("invisible");
 
   if (childrenSpan.hasClass("invisible")) childrenInput.focus();
+}
+
+async function onViewPostByUserBtnClicked(parentTr) {
+  const id = parentTr.attr("id");
+  console.log(id);
+
+  const post = (await api.getPostByUserId(id)).data;
+  console.log(post);
+
+  updatePostByUserView(post);
+}
+
+async function onViewUserBtnClicked(parentTr) {
+  const id = parentTr.attr("id");
+  console.log(id);
+
+  const user = (await api.getUser(id)).data;
+  console.log(user);
+
+  updateSelectedUserView(user);
+}
+
+async function onViewPostBtnClicked(parentTr) {
+  const id = parentTr.attr("id");
+  console.log(id);
+
+  const post = (await api.getPost(id)).data;
+  console.log(post);
+
+  updateSelectedPostView(post);
 }

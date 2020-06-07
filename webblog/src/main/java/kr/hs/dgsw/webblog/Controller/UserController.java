@@ -14,12 +14,15 @@ import kr.hs.dgsw.webblog.Protocol.ResponseFormat;
 import kr.hs.dgsw.webblog.Protocol.ResponseType;
 import kr.hs.dgsw.webblog.Service.UserService;
 
-@RestController
+@RestController // PostController는 RestController 역할을 하는 클래스임
 public class UserController {
 
-  @Autowired
-  private UserService userService;
+  @Autowired // 의존성 주입
+  private UserService userService; // DB 연동과 관련된 작업을 할 Service
 
+  /**
+   * POST 메소드로 /user/create 요청이 들어오면 처리
+   */
   @PostMapping("/user/create")
   public ResponseFormat create(@RequestBody User user) {
     User newUser = userService.create(user);
@@ -30,6 +33,9 @@ public class UserController {
     }
   }
 
+  /**
+   * Put 메소드로 /user/update/{id} 요청이 들어오면 처리
+   */
   @PutMapping("/user/update/{id}")
   public ResponseFormat update(@PathVariable Long id, @RequestBody User user) {
     if (userService.update(id, user) != null) {
@@ -39,6 +45,9 @@ public class UserController {
     }
   }
 
+  /**
+   * Delete 메소드로 /user/create/{id} 요청이 들어오면 처리
+   */
   @DeleteMapping("/user/delete/{id}")
   public ResponseFormat delete(@PathVariable Long id) {
     if (userService.delete(id)) {
@@ -48,6 +57,9 @@ public class UserController {
     }
   }
 
+  /**
+   * Get 메소드로 /user/read/{id} 요청이 들어오면 처리
+   */
   @GetMapping("/user/read/{id}")
   public ResponseFormat read(@PathVariable Long id) {
     if (userService.read(id) != null) {
@@ -57,6 +69,9 @@ public class UserController {
     }
   }
 
+  /**
+   * Get 메소드로 /user/read 요청이 들어오면 처리
+   */
   @GetMapping("/user/read")
   public ResponseFormat readAll() {
     if (userService.readAll() != null) {
