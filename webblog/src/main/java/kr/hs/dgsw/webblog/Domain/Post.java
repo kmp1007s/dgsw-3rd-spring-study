@@ -26,6 +26,9 @@ public class Post {
   private String title;
   @Column(nullable = false, columnDefinition = "TEXT") // TEXT 데이터 타입 사용
   private String content;
+  // 1:N관계, Entity 변경에 따라 관계를 맺은 Entity 변경 전략을 모두 사용,
+  // 엔티티 매니저를 통해 엔티티를 조회하면 연관관계에 매핑되어 있는 엔티티도 함께 조회,
+  // Entity 변경 시 DB 변경 전략을 DB 레이어에서 처리
   @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
   private List<Attachment> pictures;
   @CreationTimestamp // 생성 시각 자동 생성
