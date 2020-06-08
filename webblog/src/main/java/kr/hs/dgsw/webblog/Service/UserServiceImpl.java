@@ -16,6 +16,8 @@ public class UserServiceImpl implements UserService {
   private UserRepository userRepository; // 실제 SQL로 DB 조작을 대신해주는 레포지토리
 
   /**
+   * 유저 생성
+   * 
    * @param user 생성할 유저 객체
    * @return User 생성된 유저 객체
    */
@@ -28,6 +30,8 @@ public class UserServiceImpl implements UserService {
   }
 
   /**
+   * ID로 유저 업데이트
+   * 
    * @param id   업데이트 할 유저의 ID
    * @param user 업데이트 할 유저 데이터
    * @return User 업데이트 된 유저 객체
@@ -45,6 +49,8 @@ public class UserServiceImpl implements UserService {
   }
 
   /**
+   * ID로 유저 삭제
+   * 
    * @param id 삭제할 유저의 ID
    * @return boolean 삭제 성공 여부
    */
@@ -59,6 +65,8 @@ public class UserServiceImpl implements UserService {
   }
 
   /**
+   * ID로 유저 조회
+   * 
    * @param id 읽어들일 유저의 ID
    * @return User 읽어들인 유저 객체
    */
@@ -69,6 +77,8 @@ public class UserServiceImpl implements UserService {
   }
 
   /**
+   * 전체 유저 조회
+   * 
    * @return List<User> 전체 유저 반환
    */
   @Override

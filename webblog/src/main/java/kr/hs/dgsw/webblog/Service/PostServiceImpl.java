@@ -30,6 +30,8 @@ public class PostServiceImpl implements PostService {
   }
 
   /**
+   * 포스트 생성
+   * 
    * @param post 생성할 포스트 데이터
    * @return Post 생성된 포스트 데이터
    */
@@ -39,6 +41,8 @@ public class PostServiceImpl implements PostService {
   }
 
   /**
+   * ID로 포스트 읽기
+   * 
    * @param id 읽어들일 포스트의 ID
    * @return Post 읽은 포스트 데이터
    */
@@ -48,6 +52,8 @@ public class PostServiceImpl implements PostService {
   }
 
   /**
+   * 유저 ID로 포스트 조회
+   * 
    * @param userId 작성자로써 조회할 사용자의 ID
    * @return Post 작성자가 작성한 포스트
    */
@@ -57,6 +63,8 @@ public class PostServiceImpl implements PostService {
   }
 
   /**
+   * ID로 포스트 업데이트
+   * 
    * @param id   업데이트 할 포스트의 ID
    * @param post 업데이트 할 포스트 객체
    * @return Post 업데이트 한 포스트 객체
@@ -72,6 +80,8 @@ public class PostServiceImpl implements PostService {
   }
 
   /**
+   * ID로 포스트 삭제
+   * 
    * @param id 삭제 할 포스트의 ID
    * @return boolean 삭제 성공 여부
    */
@@ -86,6 +96,8 @@ public class PostServiceImpl implements PostService {
   }
 
   /**
+   * 전체 포스트 읽기
+   * 
    * @return List<Post> 전체 포스트
    */
   @Override
