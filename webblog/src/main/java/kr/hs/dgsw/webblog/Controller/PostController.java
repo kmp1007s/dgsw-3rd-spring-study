@@ -14,14 +14,17 @@ import kr.hs.dgsw.webblog.Protocol.ResponseFormat;
 import kr.hs.dgsw.webblog.Protocol.ResponseType;
 import kr.hs.dgsw.webblog.Service.PostService;
 
-@RestController // PostController는 RestController 역할을 하는 클래스임
+@RestController // MVC에서 Controller에 해당
 public class PostController {
 
   @Autowired // 의존성 주입
   private PostService postService; // DB 연동과 관련된 작업을 할 Service
 
   /**
-   * POST 메소드로 /post/create 요청이 들어오면 처리
+   * 포스트 생성 [POST] Endpoint: /post/create
+   * 
+   * @param post 생성할 포스트 객체
+   * @return ResponseFormat 정형화된 응답 포맷
    */
   @PostMapping("/post/create")
   public ResponseFormat create(@RequestBody Post post) {
@@ -34,7 +37,11 @@ public class PostController {
   }
 
   /**
-   * PUT 메소드로 /post/update/{id} 요청이 들어오면 처리
+   * ID로 포스트 업데이트 [PUT] Endpoint: /post/update/{id}
+   * 
+   * @param id   업데이트 할 포스트의 ID
+   * @param post 업데이트 할 포스트 데이터
+   * @return ResponseFormat 정형화된 응답 포맷
    */
   @PutMapping("/post/update/{id}")
   public ResponseFormat update(@PathVariable Long id, @RequestBody Post post) {
@@ -46,7 +53,10 @@ public class PostController {
   }
 
   /**
-   * Delete 메소드로 /post/delete/{id} 요청이 들어오면 처리
+   * ID로 포스트 삭제 [DELETE] Endpoint: /post/delete/{id}
+   * 
+   * @param id 삭제할 포스트의 ID
+   * @return ResponseFormat 정형화된 응답 포맷
    */
   @DeleteMapping("/post/delete/{id}")
   public ResponseFormat delete(@PathVariable Long id) {
@@ -58,7 +68,10 @@ public class PostController {
   }
 
   /**
-   * Get 메소드로 /post/read/{id} 요청이 들어오면 처리
+   * ID로 포스트 가져오기 [GET] Endpoint: /post/read/{id}
+   * 
+   * @param id 읽어들일 포스트의 ID
+   * @return ResponseFormat 정형화된 응답 포맷
    */
   @GetMapping("/post/read/{id}")
   public ResponseFormat read(@PathVariable Long id) {
@@ -70,7 +83,10 @@ public class PostController {
   }
 
   /**
-   * Get 메소드로 /post/read/user/{userId} 요청이 들어오면 처리
+   * 작성자 ID로 포스트 가져오기 [GET] Endpoint: /post/read/user/{userId}
+   * 
+   * @param userId 포스트 작성자로 조회할 사용자의 id
+   * @return ResponseFormat 정형화된 응답 포맷
    */
   @GetMapping("/post/read/user/{userId}")
   public ResponseFormat readByUserId(@PathVariable Long userId) {
@@ -82,7 +98,9 @@ public class PostController {
   }
 
   /**
-   * Get 메소드로 /post/read 요청이 들어오면 처리
+   * 전체 포스트 가져오기 [GET] Endpoint: /post/read
+   * 
+   * @return ResponseFormat 정형화된 응답 포맷
    */
   @GetMapping("/post/read")
   public ResponseFormat readAll() {

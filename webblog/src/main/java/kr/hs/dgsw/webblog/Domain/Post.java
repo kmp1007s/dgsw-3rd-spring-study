@@ -24,7 +24,7 @@ public class Post {
   private Long userId;
   @Column(nullable = false)
   private String title;
-  @Column(nullable = false, columnDefinition = "TEXT") // text 데이터 타입 사용
+  @Column(nullable = false, columnDefinition = "TEXT") // TEXT 데이터 타입 사용
   private String content;
   @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
   private List<Attachment> pictures;
@@ -37,7 +37,8 @@ public class Post {
   @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
   private LocalDateTime modified;
 
-  public Post(Long userId, String title, String content) { // userId, title, content를 받는 생성자
+  // request로 받아야 하는 필드들을 포함한 생성자
+  public Post(Long userId, String title, String content) {
     this.userId = userId;
     this.title = title;
     this.content = content;

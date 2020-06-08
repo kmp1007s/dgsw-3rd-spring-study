@@ -7,7 +7,7 @@ import kr.hs.dgsw.webblog.Domain.Post;
 
 import java.util.Optional;
 
-@Repository
+@Repository // repository라고 알림, repository는 SQL로 DB 조작하는 함수를 자동 생성해 줌
 public interface PostRepository extends JpaRepository<Post, Long> {
   Optional<Post> findTopByUserIdOrderByIdDesc(Long userId);
 }

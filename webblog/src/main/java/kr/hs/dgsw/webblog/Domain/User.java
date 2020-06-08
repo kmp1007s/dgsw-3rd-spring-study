@@ -61,6 +61,7 @@ public class User {
   @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
   private LocalDateTime modified;
 
+  // request로 받아야 하는 필드들을 포함한 생성자
   public User(String account, String password, String name, String email, String phone, String profilePath) {
     this.account = account;
     setPassword(password);

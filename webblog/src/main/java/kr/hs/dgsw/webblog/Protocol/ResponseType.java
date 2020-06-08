@@ -13,18 +13,21 @@ public enum ResponseType {
 
   ATTACHMENT_STORED(301, "이미지를 저장하였습니다."),;
 
-  final private int code;
-  final private String desc;
+  final private int code; // 응답 코드
+  final private String desc; // 응답 메시지
 
+  // 응답 코드와 메시지를 받아 응답 타입 생성
   ResponseType(int code, String desc) {
     this.code = code;
     this.desc = desc;
   }
 
+  // 응답 타입의 코드 반환
   public int code() {
     return this.code;
   }
 
+  // 응답 타입의 메시지 반환
   public String desc() {
     return this.desc;
   }

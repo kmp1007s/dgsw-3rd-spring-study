@@ -8,12 +8,12 @@ import javax.persistence.Id;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Entity // DB 엔티티의 구조
-@Data // Getter, Settor 세팅
+@Entity // JPA Entity라고 선언 -> Attachment라는 테이블과 매핑
+@Data // Getter, Setter 세팅
 @NoArgsConstructor // 기본 생성자 추가
 public class Attachment {
-  @Id // 기본키
-  @GeneratedValue(strategy = GenerationType.IDENTITY) // mysql의 Auto Increment 사용
+  @Id // 튜플의 기본키
+  @GeneratedValue(strategy = GenerationType.IDENTITY) // mysql의 Auto Increment 전략 사용
   private Long id;
   private String storedPath;
   private Long postId;
