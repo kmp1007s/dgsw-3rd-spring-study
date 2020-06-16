@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <mapper namespace="kr.hs.dgsw.webshop.UserMapper">
+    <insert id="add" parameterType="kr.hs.dgsw.webshop.User">
+      insert into user(account, password, username, tel, phone, zipcode, address, eamil)
+      values(#{account}, #{password}, #{username}, #{tel}, #{phone}, #{zipcode}, #{address}, #{email})
+    </insert>
+
+    <update id="modify" parameterType="kr.hs.dgsw.webshop.User">
+      update user
+      set password=#{password}, username=#{username}, tel=#{tel}, phone=#{phone}, zipcode=#{zipcode}, address=#{address}, email=#{email}
+      where id=#{id}
+    </update>
+
+    <delete id="deleteById" parameterType="Long">
+      delete from user
+      where id=#{id}
+    </delete>
+
+    <select id="findAll" resultType="kr.hs.dgsw.webshop.User">
+      select id, account, password, username, tel, phone, zipcode, address, email
+      from user
+    </select>
+
+    <select id="findById" parameterType="Long" resultType="kr.hs.dgsw.webshop.User">
+      select id, account, password, username, tel, phone, zipcode, address, email
+      from user
+      where id=#{id}
+    </select>
+
+    <select id="login" parameterType="kr.hs.dgsw.webshop.User" resultType="kr.hs.dgsw.webshop.User">
+      select id, account, password, username, tel, phone, zipcode, address, email
+      from user
+      where account=#{account} and password=#{password}
+    </select>
+  </mapper>
