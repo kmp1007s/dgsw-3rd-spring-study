@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 public class Review {
   private Long id;
   private Long productid;
-  private String username;
+  private String userid;
   private String content;
   private LocalDateTime created;
   private LocalDateTime modified;

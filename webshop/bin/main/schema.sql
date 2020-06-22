@@ -1,8 +1,10 @@
+use webshop;
+
 create table user(
   id bigint primary key auto_increment,
   account varchar(50) not null unique,
   password varchar(30),
-  username varchar(20),
+  username varchar(20) not null unique,
   tel varchar(20),
   phone varchar(20),
   zipcode varchar(10),
@@ -10,44 +12,56 @@ create table user(
   email varchar(50) not null unique,
   created datetime default current_timestamp,
   modified datetime default current_timestamp on update current_timestamp
-)
+);
 
 create table menu (
-  id int primary key auto_increment,
+  id bigint primary key auto_increment,
   name varchar(50)
-)
+);
 
 create table submenu (
-  id int primary key auto_increment,
-  menuid int,
-  name varchar(50)
-)
+  id bigint primary key auto_increment,
+  menuid bigint,
+  name varchar(50),
+
+  FOREIGN KEY (menuid) REFERENCES menu(id)
+);
 
 create table product (
   id bigint primary key auto_increment,
   name varchar(50),
   price int,
-  menuid int,
-  submenuid int,
+  menuid bigint,
+  submenuid bigint,
   details text,
-  image varchar(100),
-  factory varchar(50)
-)
+  factory varchar(50),
+  
+  FOREIGN KEY(menuid) REFERENCES menu(id),
+  FOREIGN KEY(submenuid) REFERENCES submenu(id)
+);
 
 create table cart (
   id bigint primary key auto_increment,
-  userid bigint,
+  userid varchar(50),
   productid bigint,
   price int,
   amount int,
-  total int
-)
+  total int,
+  created datetime default current_timestamp,
+  
+  FOREIGN KEY(userid) REFERENCES user(account),
+  FOREIGN KEY(productid) REFERENCES product(id)
+);
 
 create table review (
   id bigint primary key auto_increment,
   productid bigint,
-  userid bigint,
+  username varchar(20),
   content text,
   created datetime default current_timestamp,
-  modified datetime default current_timestamp on update current_timestamp
-)
+  modified datetime default current_timestamp on update current_timestamp,
+  
+  FOREIGN KEY(productid) REFERENCES product(id),
+  FOREIGN KEY(username) REFERENCES user(username)
+);
+

@@ -4,7 +4,7 @@ create table user(
   id bigint primary key auto_increment,
   account varchar(50) not null unique,
   password varchar(30),
-  username varchar(20) not null unique,
+  username varchar(20),
   tel varchar(20),
   phone varchar(20),
   zipcode varchar(10),
@@ -56,12 +56,12 @@ create table cart (
 create table review (
   id bigint primary key auto_increment,
   productid bigint,
-  username varchar(20),
+  userid bigint,
   content text,
   created datetime default current_timestamp,
   modified datetime default current_timestamp on update current_timestamp,
   
   FOREIGN KEY(productid) REFERENCES product(id),
-  FOREIGN KEY(username) REFERENCES user(username)
+  FOREIGN KEY(userid) REFERENCES user(id)
 );
 
