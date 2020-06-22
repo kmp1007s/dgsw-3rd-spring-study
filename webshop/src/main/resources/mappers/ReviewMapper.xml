@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.hs.dgsw.webshopping.ReviewMapper">
+
+    <insert id="add" parameterType="kr.hs.dgsw.webshopping.Domain.Review">
+        insert into review(productId, username, content, created, modified)
+        values(#{productId}, #{username}, #{content}, #{created}, #{modified})
+    </insert>
+
+    <update id="modify" parameterType="kr.hs.dgsw.webshopping.Domain.Review">
+        update review
+        set productId=#{productId}, username=#{username}, content=#{content}, created=#{created}, modified=#{modified}
+        where id=#{id}
+    </update>
+
+    <delete id="deleteById" parameterType="Long">
+        delete from review
+        where id=#{id}
+    </delete>
+
+    <select id="findById" parameterType="Long" resultType="kr.hs.dgsw.webshopping.Domain.Review">
+        select id, productId, username, content, created, modified
+        from review
+        where id=#{id}
+    </select>
+</mapper>
