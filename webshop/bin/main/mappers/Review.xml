@@ -4,13 +4,13 @@
 <mapper namespace="kr.hs.dgsw.webshopping.ReviewMapper">
 
     <insert id="add" parameterType="kr.hs.dgsw.webshopping.Domain.Review">
-        insert into review(productId, username, content, created, modified)
-        values(#{productId}, #{username}, #{content}, #{created}, #{modified})
+        insert into review(productId, userid, content, created, modified)
+        values(#{productId}, #{userid}, #{content}, #{created}, #{modified})
     </insert>
 
     <update id="modify" parameterType="kr.hs.dgsw.webshopping.Domain.Review">
         update review
-        set productId=#{productId}, username=#{username}, content=#{content}, created=#{created}, modified=#{modified}
+        set productId=#{productId}, userid=#{userid}, content=#{content}, created=#{created}, modified=#{modified}
         where id=#{id}
     </update>
 
@@ -20,7 +20,7 @@
     </delete>
 
     <select id="findById" parameterType="Long" resultType="kr.hs.dgsw.webshopping.Domain.Review">
-        select id, productId, username, content, created, modified
+        select id, productId, userid, content, created, modified
         from review
         where id=#{id}
     </select>

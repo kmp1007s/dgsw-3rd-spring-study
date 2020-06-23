@@ -29,6 +29,12 @@
       where id=#{id}
     </select>
 
+    <select id="findByAccount" parameterType="String" resultType="kr.hs.dgsw.webshop.User">
+      select id, account, password, username, tel, phone, zipcode, address, email
+      from user
+      where userid=#{userid}
+    </select>
+
     <select id="login" parameterType="kr.hs.dgsw.webshop.User" resultType="kr.hs.dgsw.webshop.User">
       select id, account, password, username, tel, phone, zipcode, address, email
       from user

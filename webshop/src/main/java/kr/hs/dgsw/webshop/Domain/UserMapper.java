@@ -15,7 +15,10 @@ public interface UserMapper {
 
   int modify(User user);
 
+  User findByAccount(@Param("account") String account);
+
   User findById(@Param("id") Long id);
 
-  Long Login(User user);
+  User login(User user);
+
 }

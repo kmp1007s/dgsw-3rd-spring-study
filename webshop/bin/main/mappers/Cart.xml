@@ -25,8 +25,8 @@
     </select>
 
     <select id="findByUserId" parameterType="Long" resultType="kr.hs.dgsw.webshopping.Domain.Cart">
-        select userId, productId, price, amount, total, created
-        from cart
-        where userId=#{userId}
+        select c.id, c.userid as userID, c.productid as productID, p.name as productName, c.price, c.amount, c.total, c.created
+        from cart c left join product p on c.productid = p.id
+        where c.userId=#{userID}
     </select>
 </mapper>
