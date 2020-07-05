@@ -5,9 +5,28 @@
     <title>쇼핑몰</title>
     <link rel="stylesheet" href="./cart.css">
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <link rel="stylesheet" href="./nav.css">
 </head>
 <body>
+<nav id="pageNav">
+    <ul id="nav">
+        <li>
+            <a href="./register.html">회원가입</a>
+        </li>
+        <li>
+            <a href="./login.html">로그인</a>
+        </li>
+        <li>
+            <a href="./cart.html">내 장바구니</a>
+        </li>
+        <li>
+            <a href="./newProduct.html">물품등록</a>
+        </li>
+    </ul>
+</nav>
 <div>
+    <h1>내 장바구니</h1>
+    <p>장바구니에 추가한 물품을 나열합니다</p>
     <table id="cartTable">
         <thead>
         <tr>
@@ -44,57 +63,28 @@
         <span>원</span>
     </p>
     <p>
-        <button>쇼핑하기</button>
-        <button>주문하기</button>
+        <button id="buttonShopping">쇼핑하기</button>
+        <button id="buttonPaying">주문하기</button>
     </p>
 </div>
 
+<div id="modalContainer">
+    <div id="payModal">
+        <p>
+            <span>총 지불 금액: </span>
+            <span id="payTotal"></span>
+            <span>원</span>
+        </p>
+        <p>결제하시겠습니까?</p>
+        <button id="btnPayOK">확인</button>
+        <button id="btnPayCancel">취소</button>
+        <a id="textClosePay" href="#">닫기</a>
+    </div>
+</div>
+
+
+<script src="./ajax.js"></script>
 <script>
-    const ajax = {
-        server: "http://localhost:8080",
-        dataType: "json",
-        contentType: "application/json",
-
-        get: function (endpoint, success, error) {
-            $.ajax({
-                url: this.server + endpoint,
-                method: "GET",
-                dataType: this.dataType,
-                success,
-                error
-            });
-        },
-        post: function (endpoint, data, success, error) {
-            $.ajax({
-                url: this.server + endpoint,
-                method: "POST",
-                contentType: this.contentType,
-                data: JSON.stringify(data),
-                success,
-                error,
-            });
-        },
-        put: function (endpoint, data, success, error) {
-            $.ajax({
-                url: this.server + endpoint,
-                method: "PUT",
-                contentType: this.contentType,
-                data: JSON.stringify(data),
-                success,
-                error,
-            });
-        },
-        delete: function (endpoint, success, error) {
-            $.ajax({
-                url: this.server + endpoint,
-                method: "DELETE",
-                dataType: this.dataType,
-                success,
-                error,
-            });
-        },
-    };
-
     const api = {
         findCartByUserId: function (userId) {
             return new Promise((resolve, reject) => {
@@ -131,12 +121,57 @@
 </script>
 
 <script>
-    const userId = 3;
+    const userId = sessionStorage.getItem("userId");
 
     init();
 
     function init() {
         getCarts();
+        setHandler();
+        $("#modalContainer").hide();
+    }
+
+    function setHandler() {
+        $("#buttonShopping").on("click", goIndex);
+        $("#buttonPaying").on("click", pay);
+        $("#btnPayOK").on("click", payOk);
+        $("#btnPayCancel").on("click", payCancel);
+        $("#textClosePay").on("click", payClose);
+    }
+
+    function goIndex() {
+        location.href = "/";
+    }
+
+    function pay() {
+        $("#modalContainer").show();
+    }
+
+    function payClose() {
+        $("#modalContainer").hide();
+    }
+
+    function payOk() {
+        const carts = $("#cartTable > tbody > tr");
+
+        carts.each(async (idx, item) => {
+            item = $(item);
+            const id = item.data("id");
+
+            // 삭제해야 할 엘리먼트면
+            if(id)
+                await api.deleteCartById(id);
+
+            if (idx === (carts.length - 1)) {
+                alert("결제가 완료되었습니다");
+                payClose();
+                getCarts();
+            }
+        });
+    }
+
+    function payCancel() {
+        payClose();
     }
 
     async function getCarts() {
@@ -219,6 +254,7 @@
         });
 
         $("#allTotal")[0].innerHTML = allTotal;
+        $("#payTotal")[0].innerHTML = allTotal;
     }
 
     function deleteCart() {

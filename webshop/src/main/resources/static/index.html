@@ -1,163 +1,89 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="UTF-8"/>
     <title>쇼핑몰</title>
+    <meta charset="UTF-8">
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <link rel="stylesheet" href="./menu.css">
+    <link rel="stylesheet" href="./nav.css">
 </head>
-<body>
-<h1>회원가입</h1>
-<div>
-    <p>
-        <span>아이디</span>
-        <input id="inputRegisterId" type="text">
-        <button id="buttonIdCheck">중복확인</button>
-    </p>
-    <p>
-        <span>패스워드</span>
-        <input id="inputRegisterPassword" type="password">
-    </p>
-    <p>
-        <span>패스워드확인</span>
-        <input id="inputRegisterPasswordCheck" type="password">
-    </p>
-    <p>
-        <span>성명</span>
-        <input id="inputRegisterUserName" type="text">
-    </p>
-    <p>
-        <span>전화번호</span>
-        <input id="inputRegisterTel" type="text">
-    </p>
-    <p>
-        <span>핸드폰</span>
-        <input id="inputRegisterPhone" type="text">
-    </p>
-    <p>
-        <span>우편번호</span>
-        <input id="inputRegisterZipCodeFirst" type="text">
-        <span> - </span>
-        <input id="inputRegisterZipCodeSecond" type="text">
-    </p>
-    <p>
-        <span>주소</span>
-    <p>
-        <input id="inputRegisterAddressFirst" type="text">
-    </p>
-    <p>
-        <input id="inputRegisterAddressSecond" type="text">
-    </p>
-    </p>
-    <p>
-        <span>이메일</span>
-        <input id="inputRegisterEmail" type="email">
-    </p>
-    <button id="btnRegisterOK">확인</button>
-    <button id="btnRegisterCancel">취소</button>
-</div>
+<style>
+    html, body {
+        height: 100%;
+    }
 
-<h1>로그인</h1>
-<div>
-    <p>
-        <span>아이디</span>
-        <input id="inputLoginId" type="text"/>
-    </p>
-    <p>
-        <span>패스워드</span>
-        <input id="inputLoginPassword" type="password"/>
-    </p>
-    <button id="btnLogin">확인</button>
-</div>
+    body {
+        margin: 0;
+        padding: 0;
+    }
+
+    #productArea {
+        /*padding-top: 14px;*/
+    }
+
+    #products > li > a{
+        display: block;
+        padding: 24px;
+        background-color: #b8bac4;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+
+    #products > li > a:hover {
+        filter: brightness(75%);
+    }
+
+    #products > li a {
+        color: #565656;
+    }
+</style>
+<body>
+
+<nav id="pageNav">
+    <ul id="nav">
+        <li>
+            <a href="./register.html">회원가입</a>
+        </li>
+        <li>
+            <a href="./login.html">로그인</a>
+        </li>
+        <li>
+            <a href="./cart.html">내 장바구니</a>
+        </li>
+        <li>
+            <a href="./newProduct.html">물품등록</a>
+        </li>
+    </ul>
+</nav>
+
+<nav>
+    <ul id="menus">
+
+    </ul>
+    <div id="productArea">
+        <ul id="products">
+
+        </ul>
+    </div>
+</nav>
+
+<script src="./ajax.js"></script>
 
 <script>
-    const ajax = {
-        server: "http://localhost:8080",
-        dataType: "json",
-        contentType: "application/json",
-
-        get: function (endpoint, success, error) {
-            $.ajax({
-                url: this.server + endpoint,
-                method: "GET",
-                dataType: this.dataType,
-                success,
-                error
-            });
-        },
-        post: function (endpoint, data, success, error) {
-            $.ajax({
-                url: this.server + endpoint,
-                method: "POST",
-                contentType: this.contentType,
-                data: JSON.stringify(data),
-                success,
-                error,
-            });
-        },
-        put: function (endpoint, data, success, error) {
-            $.ajax({
-                url: this.server + endpoint,
-                method: "PUT",
-                contentType: this.contentType,
-                data: JSON.stringify(data),
-                success,
-                error,
-            });
-        },
-        delete: function (endpoint, success, error) {
-            $.ajax({
-                url: this.server + endpoint,
-                method: "DELETE",
-                dataType: this.dataType,
-                success,
-                error,
-            });
-        },
-    };
-
     const api = {
-        findUserByAccount: function (account) {
+        getMenus: function () {
             return new Promise((resolve, reject) => {
-                ajax.get(
-                    `/api/user/account/${account}`,
-                    res => {
-                        resolve(res);
-                    }
-                );
-            });
+                ajax.get("/api/menu", res => {
+                    resolve(res);
+                });
+            })
         },
-        idCheck: function (account) {
+        getProductsByMenuId: function (menuId) {
             return new Promise((resolve, reject) => {
-                ajax.get(
-                    `/api/user/exist/${account}`,
-                    res => {
-                        resolve(res);
-                    }
-                );
-            });
-        },
-        login: function ({account, password}) {
-            return new Promise((resolve, reject) => {
-                ajax.post(
-                    "/api/user/login",
-                    {account, password},
-                    res => {
-                        resolve(res);
-                    }
-                );
-            });
-        },
-        register: function ({account, password, user_name, tel, phone, zip_code, address, email}) {
-            return new Promise((resolve, reject) => {
-                ajax.post(
-                    "/api/user",
-                    {account, password, user_name, tel, phone, zip_code, address, email},
-                    res => {
-                        resolve(res);
-                    }
-                );
-            });
-        },
+                ajax.get(`/api/product/menu/${menuId}`, res => {
+                    resolve(res);
+                })
+            })
+        }
     };
 </script>
 
@@ -165,82 +91,49 @@
     init();
 
     function init() {
-        setHandler();
-        setInputValue();
+        getMenus();
     }
 
-    function setHandler() {
-        $("#buttonIdCheck").on("click",buttonIdCheck);
-        $("#btnRegisterOK").on("click", register);
-        $("#btnRegisterCancel").on("click", registerCancel);
-        $("#btnLogin").on("click", login);
-    }
-
-    function setInputValue() {
-        $("#inputRegisterId").val("root");
-        $("#inputRegisterPassword").val("toor");
-        $("#inputRegisterUserName").val("rootman");
-        $("#inputRegisterTel").val("053-123-456");
-        $("#inputRegisterPhone").val("010-1234-4567");
-        $("#inputRegisterZipCodeFirst").val("K1A");
-        $("#inputRegisterZipCodeSecond").val("0B1");
-        $("#inputRegisterAddressFirst").val("대구 북구 구암로 19길 40");
-        $("#inputRegisterAddressSecond").val("OOO아파트 (123동 456호)");
-        $("#inputRegisterEmail").val("root@root.com");
-
-        $("#inputLoginId").val("root");
-        $("#inputLoginPassword").val("toor");
-    }
-
-    async function buttonIdCheck() {
-        const res = await api.idCheck($("#inputRegisterId").val());
+    async function getMenus() {
+        const res = await api.getMenus();
         console.log(res);
 
-        if (res === true)
-            alert("이미 아이디가 존재합니다");
+        updateMenuUI(res);
     }
 
-    async function login() {
-        const res = await api.login({
-            account: $("#inputLoginId").val(),
-            password: $("#inputLoginPassword").val()
-        });
+    function updateMenuUI(menus) {
+        $("#menus > li").remove();
 
+        for (menu of menus) {
+            $("#menus").append(`
+            <li data-id="${menu.id}" onclick="onMenuClick(${menu.id})">
+                <span>
+                    ${menu.name}
+                </span>
+            </li>
+            `);
+        }
+    }
+
+    async function onMenuClick(menuId) {
+        const res = await api.getProductsByMenuId(menuId);
         console.log(res);
 
-        if (res) alert("로그인 성공");
+        updateProductsUI(res);
     }
 
-    async function register() {
-        if ($("#inputRegisterPassword").val() !== $("#inputRegisterPasswordCheck").val())
-            return alert("비밀번호 확인에 실패했습니다");
+    function updateProductsUI(products) {
+        $("#products > li").remove();
 
-        const res = await api.register({
-            account: $("#inputRegisterId").val(),
-            password: $("#inputRegisterPassword").val(),
-            user_name: $("#inputRegisterUserName").val(),
-            tel: $("#inputRegisterTel").val(),
-            phone: $("#inputRegisterPhone").val(),
-            zip_code: $("#inputRegisterZipCodeFirst").val() + $("#inputRegisterZipCodeSecond").val(),
-            address: $("#inputRegisterAddressFirst").val() + $("#inputRegisterAddressSecond").val(),
-            email: $("#inputRegisterEmail").val()
-        });
-
-        console.log(res);
-    }
-
-    function registerCancel() {
-        $("#inputRegisterId").val("");
-        $("#inputRegisterPassword").val("");
-        $("#inputRegisterUserName").val("");
-        $("#inputRegisterTel").val("");
-        $("#inputRegisterPhone").val("");
-        $("#inputRegisterZipCodeFirst").val("");
-        $("#inputRegisterZipCodeSecond").val("");
-        $("#inputRegisterAddressFirst").val("");
-        $("#inputRegisterAddressSecond").val("");
-        $("#inputRegisterEmail").val("");
+        for (product of products) {
+            $("#products").append(`
+            <li data-id="${product.id}}">
+                <a href="./product.html?id=${product.id}">${product.name}</a>
+            </li>
+            `);
+        }
     }
 </script>
+
 </body>
 </html>

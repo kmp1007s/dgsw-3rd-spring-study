@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>쇼핑몰</title>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <link rel="stylesheet" href="./nav.css">
+</head>
+<body>
+
+<nav id="pageNav">
+    <ul id="nav">
+        <li>
+            <a href="./register.html">회원가입</a>
+        </li>
+        <li>
+            <a href="./login.html">로그인</a>
+        </li>
+        <li>
+            <a href="./cart.html">내 장바구니</a>
+        </li>
+        <li>
+            <a href="./newProduct.html">물품등록</a>
+        </li>
+    </ul>
+</nav>
+<h1 id="productName"></h1>
+<div>
+    <span>주문수량: </span>
+    <input id="productCount" type="number" value="1">
+    <span>개</span>
+</div>
+<div>
+    <span>판매가격: </span>
+    <span id="productPrice"></span>
+</div>
+<div>
+    <span>판매자: </span>
+    <span id="productSeller"></span>
+</div>
+<div>
+    <span>상품 설명</span>
+    <p id="productDetail"></p>
+</div>
+<p>
+    <button id="buttonAddCart">장바구니 담기</button>
+</p>
+<div id="reviewArea">
+    <p>
+        <span>상품 후기</span>
+        <textarea id="inputReview"></textarea>
+        <button id="buttonAddReview">리뷰 작성</button>
+    </p>
+    <table id="reviewTable">
+        <thead>
+        <th>작성자</th>
+        <th>내용</th>
+        <th>작성일</th>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+
+<script src="./ajax.js"></script>
+
+<script>
+    const api = {
+        getProductById: function (id) {
+            return new Promise((resolve, reject) => {
+                ajax.get(
+                    `/api/product/${id}`,
+                    res => {
+                        resolve(res);
+                    }
+                );
+            })
+
+        },
+        getReviewsByProductId: function (productId) {
+            return new Promise((resolve, reject) => {
+                ajax.get(
+                    `/api/review/${productId}`,
+                    res => {
+                        resolve(res);
+                    }
+                )
+            })
+        },
+        addReview: function ({product_id, user_id, content}) {
+            return new Promise((resolve, reject) => {
+                ajax.post(
+                    "/api/review",
+                    {product_id, user_id, content},
+                    res => {
+                        resolve(res);
+                    }
+                )
+            })
+        },
+        addCart: function ({user_id, product_id, price, amount, total}) {
+            return new Promise((resolve, reject) => {
+                ajax.post(
+                    "/api/cart",
+                    {user_id, product_id, price, amount, total},
+                    res => {
+                        resolve(res);
+                    }
+                )
+            })
+        }
+    };
+</script>
+
+<script>
+    const userId = sessionStorage.getItem("userId");
+
+    const id = getQueryStrings().id;
+    let menu_id;
+    let sub_menu_id;
+    let name;
+    let price;
+    let details;
+    let factory;
+
+    init();
+
+    function init() {
+        setHandler();
+        getProduct();
+        getReview();
+    }
+
+    function setHandler() {
+        $("#buttonAddReview").on("click", addReview);
+        $("#buttonAddCart").on("click", addCart);
+    }
+
+    function getQueryStrings() {
+        const params = {};
+        window.location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (str, key, value) {
+            params[key] = value;
+        });
+        return params;
+    }
+
+    async function getProduct() {
+        const res = await api.getProductById(id);
+        updateProductUI(res);
+    }
+
+    function updateProductUI(product) {
+        setProduct(product);
+
+        $("#productName")[0].innerHTML = product.name;
+        $("#productDetail")[0].innerHTML = product.details;
+        $("#productPrice")[0].innerHTML = product.price;
+        $("#productSeller")[0].innerHTML = product.factory;
+    }
+
+    function setProduct(product) {
+        name = product.name;
+        details = product.details;
+        price = product.price;
+        factory = product.factory;
+        menu_id = product.menu_id;
+        sub_menu_id = product.sub_menu_id;
+    }
+
+    async function getReview() {
+        const res = await api.getReviewsByProductId(id);
+        console.log(res);
+
+        updateReviewUI(res);
+    }
+
+    function updateReviewUI(reviews) {
+        $("#reviewTable > tbody > tr").remove();
+
+        for (review of reviews) {
+            $("#reviewTable > tbody").append(`
+                    <tr data-id="${review.id}">
+                        <td>
+                            <span>${review.account}</span>
+                        </td>
+                        <td>
+                            <p>${review.content}</p>
+                        </td>
+                        <td>
+                            <span>${review.created}</span>
+                        </td>
+                    </tr>
+                `);
+        }
+    }
+
+    async function addReview() {
+        const res = await api.addReview({
+            product_id: id,
+            user_id: userId,
+            content: $("#inputReview").val()
+        });
+        console.log(res);
+
+        getReview();
+    }
+
+    async function addCart() {
+        const amount = $("#productCount").val();
+
+        const res = await api.addCart({
+            user_id: userId,
+            product_id: id,
+            price,
+            amount,
+            total: price * amount,
+        });
+        console.log(res);
+    }
+</script>
+</body>
+</html>

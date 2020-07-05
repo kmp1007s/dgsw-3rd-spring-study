@@ -3,16 +3,16 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.webshop.Domain.ProductMapper">
     <insert id="add" parameterType="com.example.webshop.Domain.Product">
-        insert into product(name, price, menu_id, sub_menu_id, details, factory)
-        values(#{name}, #{price}, #{menu_id}, #{sub_menu_id}, #{details}, #{factory})
-        <selectKey keyProperty="id" resultType="Long">
-            select last_insert_id()
+        insert into product(name, price, menu_id, sub_menu_id, streamer_id, details, factory)
+        values(#{name}, #{price}, #{menu_id}, #{sub_menu_id}, #{streamer_id}, #{details}, #{factory})
+        <selectKey keyProperty="id" resultType="Long" order="AFTER">
+            SELECT LAST_INSERT_ID()
         </selectKey>
     </insert>
 
     <update id="modify" parameterType="com.example.webshop.Domain.Product">
         update product
-        set name=#{name}, price=#{price}, menu_id=#{menu_id}, sub_menu_id=#{sub_menu_id}, 
+        set name=#{name}, price=#{price}, menu_id=#{menu_id}, sub_menu_id=#{sub_menu_id}, streamer_id=#{streamer_id},
         details=#{details}, factory=#{factory}
         where id=#{id}
     </update>
@@ -23,25 +23,25 @@
     </delete>
 
     <select id="findById" parameterType="Long" resultType="com.example.webshop.Domain.Product">
-        select id, name, price, menu_id, sub_menu_id, details, factory
+        select id, name, price, menu_id, sub_menu_id, streamer_id, details, factory
         from product
         where id=#{id}
     </select>
 
-    <select id="findBymenu_id" parameterType="Long" resultType="com.example.webshop.Domain.Product">
-        select id, name, price, menu_id, sub_menu_id, details, factory
+    <select id="findByMenuId" parameterType="Long" resultType="com.example.webshop.Domain.Product">
+        select id, name, price, menu_id, sub_menu_id, streamer_id, details, factory
         from product
-        where menu_id=#{menu_id}
+        where menu_id=#{menuId}
     </select>
 
     <select id="findBySubmenu_id" parameterType="Long" resultType="com.example.webshop.Domain.Product">
-        select id, name, price, menu_id, sub_menu_id, details, factory
+        select id, name, price, menu_id, sub_menu_id, streamer_id, details, factory
         from product
         where sub_menu_id=#{sub_menu_id}
     </select>
 
     <select id="findAll" parameterType="Long" resultType="com.example.webshop.Domain.Product">
-        select id, name, price, menu_id, sub_menu_id, details, factory
+        select id, name, price, menu_id, sub_menu_id, streamer_id, details, factory
         from product
     </select>
 </mapper>

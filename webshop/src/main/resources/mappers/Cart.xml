@@ -3,8 +3,8 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.webshop.Domain.CartMapper">
     <insert id="add" parameterType="com.example.webshop.Domain.Cart">
-        insert into cart(user_id, product_id, price, amount, total, created)
-        values(#{userId}, #{productId}, #{price}, #{amount}, #{total}, #{created})
+        insert into cart(user_id, product_id, price, amount, total)
+        values(#{user_id}, #{product_id}, #{price}, #{amount}, #{total})
         <selectKey keyProperty="id" resultType="Long">
             select last_insert_id()
         </selectKey>

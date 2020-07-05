@@ -7,14 +7,15 @@ import com.example.webshop.Service.ProductService;
 
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class ProductController {
     @Autowired
     ProductService productService;
+
+    @PostMapping(value="/api/product")
+    public Long addProduct(@RequestBody Product product) { return productService.add(product); }
 
     @GetMapping(value="/api/product")
     public List<Product> findAll() {
@@ -26,7 +27,7 @@ public class ProductController {
         return productService.findById(id);
     }
 
-    @GetMapping(value="/api/product/{menuId}")
+    @GetMapping(value="/api/product/menu/{menuId}")
     public List<Product> findByMenuId(@PathVariable Long menuId) {
         return productService.findByMenuId(menuId);
     }

@@ -5,7 +5,6 @@ import java.util.List;
 import com.example.webshop.Domain.Cart;
 import com.example.webshop.Service.CartService;
 
-import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,7 +14,7 @@ public class CartController {
     CartService cartService;
 
     @PostMapping(value="/api/cart")
-    public Long add(Cart cart) {
+    public Long add(@RequestBody Cart cart) {
         return cartService.add(cart);
     }
 
