@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>쇼핑몰</title>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+  </head>
+  <body>
+    <h1>로그인</h1>
+    <div>
+      <p>
+        <span>아이디</span>
+        <input id="inputLoginId" type="text" />
+      </p>
+      <p>
+        <span>패스워드</span>
+        <input id="inputLoginPassword" type="password" />
+      </p>
+      <button onclick="login();">로그인</button>
+    </div>
+
+    <script>
+      const ajax = {
+        server: "http://localhost:8080",
+        dataType: "application/json",
+        contentType: "application/json",
+
+        get: function (endpoint, success, error) {
+          $.ajax({
+            url: this.server + endpoint,
+            method: "GET",
+            dataType: this.dataType,
+            success,
+            error,
+          });
+        },
+        post: function (endpoint, data, success, error) {
+          $.ajax({
+            url: this.server + endpoint,
+            method: "POST",
+            contentType: this.contentType,
+            data: JSON.stringify(data),
+            success,
+            error,
+          });
+        },
+        put: function (endpoint, data, success, error) {
+          $.ajax({
+            url: this.server + endpoint,
+            method: "PUT",
+            contentType: this.contentType,
+            data: JSON.stringify(data),
+            success,
+            error,
+          });
+        },
+        delete: function (endpoint, success, error) {
+          $.ajax({
+            url: this.server + endpoint,
+            method: "DELETE",
+            dataType: this.dataType,
+            success,
+            error,
+          });
+        },
+      };
+
+      const api = {
+        login: function (userId, password) {
+          return new Promise((resolve, reject) => {
+            ajax.post("/api/user/login", { userId, password }, (res) => {
+              resolve(res);
+            });
+          });
+        },
+      };
+    </script>
+
+    <script>
+      async function login() {
+        const res = await api.login(
+          $("#inputLoginId").val(),
+          $("#inputLoginPassword").val()
+        );
+        console.log(res);
+      }
+    </script>
+  </body>
+</html>

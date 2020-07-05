@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN"
-    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="kr.hs.dgsw.webshopping.CartMapper">
-
-    <insert id="add" parameterType="kr.hs.dgsw.webshopping.Domain.Cart">
-        insert into cart(userId, productId, price, amount, total, created)
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.webshop.Domain.CartMapper">
+    <insert id="add" parameterType="com.example.webshop.Domain.Cart">
+        insert into cart(user_id, product_id, price, amount, total, created)
         values(#{userId}, #{productId}, #{price}, #{amount}, #{total}, #{created})
+        <selectKey keyProperty="id" resultType="Long">
+            select last_insert_id()
+        </selectKey>
     </insert>
 
     <delete id="deleteById" parameterType="Long">
@@ -15,18 +17,18 @@
 
     <delete id="deleteByUserId" parameterType="Long">
         delete from cart
-        where userId=#{userId}
+        where user_id=#{userId}
     </delete>
 
-    <select id="findById" parameterType="Long" resultType="kr.hs.dgsw.webshopping.Domain.Cart">
-        select userId, productId, price, amount, total, created
+    <select id="findById" parameterType="Long" resultType="com.example.webshop.Domain.Cart">
+        select id, userId, product_id, price, amount, total, created
         from cart
         where id=#{id}
     </select>
 
-    <select id="findByUserId" parameterType="Long" resultType="kr.hs.dgsw.webshopping.Domain.Cart">
-        select c.id, c.userid as userID, c.productid as productID, p.name as productName, c.price, c.amount, c.total, c.created
-        from cart c left join product p on c.productid = p.id
-        where c.userId=#{userID}
+    <select id="findByUserId" parameterType="Long" resultType="HashMap">
+        select id, c.user_id as userID, product_id as productId, p.name as productName, c.price, c.amount, c.total, c.created
+        from cart c left join product p on c.prouct_id = p.id
+        where c.user_id=#{userId}
     </select>
 </mapper>

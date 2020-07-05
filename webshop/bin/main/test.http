@@ -1,0 +1,17 @@
+GET http://localhost:8080/api/menu/id
+Accept: application/json
+
+###
+
+GET http://localhost:8080/api/user
+Accept: application/json
+
+###
+
+GET http://localhost:8080/api/review/1
+Accept: application/json
+
+###
+
+GET http://localhost:8080/api/subMenu/1
+Accept: application/json
