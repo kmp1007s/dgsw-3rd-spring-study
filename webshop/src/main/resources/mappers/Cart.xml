@@ -27,8 +27,14 @@
     </select>
 
     <select id="findByUserId" parameterType="Long" resultType="HashMap">
-        select id, c.user_id as userID, product_id as productId, p.name as productName, c.price, c.amount, c.total, c.created
-        from cart c left join product p on c.prouct_id = p.id
+        select c.id, c.user_id as userID, c.product_id as productId, p.name as productName, c.price, c.amount, c.total, c.created
+        from cart c left join product p on c.product_id = p.id
         where c.user_id=#{userId}
     </select>
+
+    <update id="modify" parameterType="com.example.webshop.Domain.Cart">
+        update cart
+        set amount=#{amount}, total=#{total}
+        where id=#{id}
+    </update>
 </mapper>

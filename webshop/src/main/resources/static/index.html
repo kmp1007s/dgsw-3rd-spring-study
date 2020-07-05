@@ -170,18 +170,10 @@
     }
 
     function setHandler() {
-        $("#buttonIdCheck").click(() => {
-            buttonIdCheck();
-        });
-        $("#btnRegisterOK").click(() => {
-            register();
-        });
-        $("#btnRegisterCancel").click(() => {
-            registerCancel();
-        });
-        $("#btnLogin").click(() => {
-            login();
-        });
+        $("#buttonIdCheck").on("click",buttonIdCheck);
+        $("#btnRegisterOK").on("click", register);
+        $("#btnRegisterCancel").on("click", registerCancel);
+        $("#btnLogin").on("click", login);
     }
 
     function setInputValue() {

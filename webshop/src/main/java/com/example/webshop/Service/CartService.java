@@ -10,4 +10,5 @@ public interface CartService {
     int deleteByUserId(Long userId);
     Cart findById(Long id);
     List<Cart> findByUserId(Long userId);
+    int modify(Cart cart);
 }

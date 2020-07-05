@@ -1,4 +1,4 @@
-console.log("script load");
+	console.log("script load");
 
 const server = "http://localhost:8080";
 const contentType = "application/json";

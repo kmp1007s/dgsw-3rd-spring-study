@@ -7,11 +7,7 @@ import com.example.webshop.Service.CartService;
 
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class CartController {
@@ -28,7 +24,7 @@ public class CartController {
         return cartService.deleteById(id);
     }
 
-    @DeleteMapping(value="/api/cart/{userId}")
+    @DeleteMapping(value="/api/cart/user/{userId}")
     public int deleteByUserId(@PathVariable Long userId) {
         return cartService.deleteByUserId(userId);
     }
@@ -38,8 +34,13 @@ public class CartController {
         return cartService.findById(id);
     }
 
-    @GetMapping(value="/api/cart/{userId}")
-    public List<Cart> findByUserId(@PathVariable  Long userId) {
+    @GetMapping(value="/api/cart/user/{userId}")
+    public List<Cart> findByUserId(@PathVariable Long userId) {
         return cartService.findByUserId(userId);
+    }
+
+    @PutMapping(value="/api/cart")
+    public int updateById(@RequestBody Cart cart) {
+        return cartService.modify(cart);
     }
 }

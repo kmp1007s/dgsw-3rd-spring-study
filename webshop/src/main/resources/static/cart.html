@@ -7,37 +7,234 @@
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 </head>
 <body>
-    <div>
-        <table>
-            <thead>
-                <tr>
-                    <th>주문상품</th>
-                    <th>가격</th>
-                    <th>주문수</th>
-                    <th>합계</th>
-                    <th>삭제</th>
+<div>
+    <table id="cartTable">
+        <thead>
+        <tr>
+            <th>주문상품</th>
+            <th>가격</th>
+            <th>주문수</th>
+            <th>합계</th>
+            <th>삭제</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>
+
+            </td>
+            <td>
+
+            </td>
+            <td>
+
+            </td>
+            <td>
+
+            </td>
+            <td>
+                <button id="btnDeleteCart" onclick="deleteCart()">삭제하기</button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <p>
+        <span>주문 총가격: </span>
+        <span id="allTotal">0</span>
+        <span>원</span>
+    </p>
+    <p>
+        <button>쇼핑하기</button>
+        <button>주문하기</button>
+    </p>
+</div>
+
+<script>
+    const ajax = {
+        server: "http://localhost:8080",
+        dataType: "json",
+        contentType: "application/json",
+
+        get: function (endpoint, success, error) {
+            $.ajax({
+                url: this.server + endpoint,
+                method: "GET",
+                dataType: this.dataType,
+                success,
+                error
+            });
+        },
+        post: function (endpoint, data, success, error) {
+            $.ajax({
+                url: this.server + endpoint,
+                method: "POST",
+                contentType: this.contentType,
+                data: JSON.stringify(data),
+                success,
+                error,
+            });
+        },
+        put: function (endpoint, data, success, error) {
+            $.ajax({
+                url: this.server + endpoint,
+                method: "PUT",
+                contentType: this.contentType,
+                data: JSON.stringify(data),
+                success,
+                error,
+            });
+        },
+        delete: function (endpoint, success, error) {
+            $.ajax({
+                url: this.server + endpoint,
+                method: "DELETE",
+                dataType: this.dataType,
+                success,
+                error,
+            });
+        },
+    };
+
+    const api = {
+        findCartByUserId: function (userId) {
+            return new Promise((resolve, reject) => {
+                ajax.get(
+                    `/api/cart/user/${userId}`,
+                    res => {
+                        resolve(res);
+                    }
+                );
+            })
+        },
+        updateCartById: function ({id, amount, total}) {
+            return new Promise((resolve, reject) => {
+                ajax.put(
+                    "/api/cart",
+                    {id, amount, total},
+                    res => {
+                        resolve(res);
+                    }
+                );
+            })
+        },
+        deleteCartById: function (id) {
+            return new Promise((resolve, reject) => {
+                ajax.delete(
+                    `/api/cart/${id}`,
+                    res => {
+                        resolve(res);
+                    }
+                )
+            })
+        }
+    };
+</script>
+
+<script>
+    const userId = 3;
+
+    init();
+
+    function init() {
+        getCarts();
+    }
+
+    async function getCarts() {
+        const res = await api.findCartByUserId(userId);
+        console.log(res);
+
+        renderCartUI(res);
+    }
+
+    function renderCartUI(carts) {
+        const buttonRow = $("#cartTable tbody > tr:last-child");
+
+        $("#cartTable tbody > tr").remove();
+
+        for (let cart of carts) {
+            $("#cartTable tbody").append(`
+                <tr data-id="${cart.id}">
+                    <td>
+                        <span>${cart.productName}</span>
+                    </td>
+                    <td>
+                        <span class="cartPrice">${cart.price}</span>
+                    </td>
+                    <td>
+                        <input type="number" value="${cart.amount}" onkeyup="amountChange(${cart.id})" onmouseup="amountChange(${cart.id})">
+                    </td>
+                    <td>
+                        <span class="cartTotal">${cart.total}</span>
+                    </td>
+                    <td>
+                        <input type="checkbox" onclick="deleteCheck(${cart.id})">
+                    </td>
                 </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>
-                        <span>맛있는 사과 한 박스</span>
-                    </td>
-                    <td>
-                        20,000
-                    </td>
-                    <td>
-                        <input type="number">
-                    </td>
-                    <td>
-                        60,000
-                    </td>
-                    <td>
-                        <input type="checkbox">
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+            `);
+        }
+
+        $("#cartTable tbody").append(buttonRow);
+
+        refreshAllTotal();
+    }
+
+    async function amountChange(id) {
+        console.log(id);
+
+        const item = $(`#cartTable tr[data-id="${id}"]`);
+        const price = item.find(".cartPrice")[0];
+        const amount = item.find("input[type=number]")[0];
+
+        const total = Number(price.innerHTML) * Number(amount.value);
+
+        const res = await api.updateCartById({
+            id,
+            total,
+            amount: Number(amount.value)
+        });
+        console.log(res);
+
+        item.find(".cartTotal")[0].innerHTML = total;
+
+        refreshAllTotal();
+    }
+
+    function deleteCheck(id) {
+        console.log(id);
+
+        const item = $(`#cartTable tr[data-id="${id}"]`);
+        const checkbox = item.find("input[type=checkbox]");
+
+        if (checkbox.is(":checked"))
+            item.attr("data-delete", "true");
+        else
+            item.removeAttr("data-delete");
+    }
+
+    function refreshAllTotal() {
+        let allTotal = 0;
+
+        $("#cartTable .cartTotal").each((idx, item) => {
+            allTotal += Number(item.innerHTML);
+        });
+
+        $("#allTotal")[0].innerHTML = allTotal;
+    }
+
+    function deleteCart() {
+        const itemsToDelete = $("#cartTable tr[data-delete=true]");
+        console.log(itemsToDelete);
+
+        itemsToDelete.each((idx, item) => {
+            item = $(item);
+            const id = item.data("id");
+            api.deleteCartById(id).then(() => {
+                if (idx === (itemsToDelete.length - 1))
+                    getCarts();
+            });
+        });
+    }
+</script>
+
 </body>
 </html>
