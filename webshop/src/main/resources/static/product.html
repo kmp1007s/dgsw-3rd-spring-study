@@ -22,6 +22,9 @@
         <li>
             <a href="./newProduct.html">물품등록</a>
         </li>
+        <li>
+            <a href="/">메인</a>
+        </li>
     </ul>
 </nav>
 <h1 id="productName"></h1>
@@ -216,6 +219,9 @@
             total: price * amount,
         });
         console.log(res);
+
+        if(res === 1) alert("장바구니에 담았습니다");
+        else alert("장바구니에 담지 못했습니다");
     }
 </script>
 </body>

@@ -106,6 +106,8 @@
             alert("로그인 성공");
             sessionStorage.setItem("userId", res.id);
             location.href = "/";
+        } else {
+            alert("로그인 실패");
         }
     }
 </script>
