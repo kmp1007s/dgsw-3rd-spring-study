@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>쇼핑몰</title>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <link rel="stylesheet" href="./nav.css">
+</head>
+<body>
+
+<nav id="pageNav">
+    <ul id="nav">
+        <li>
+            <a href="./register.html">회원가입</a>
+        </li>
+        <li>
+            <a href="./login.html">로그인</a>
+        </li>
+        <li>
+            <a href="./cart.html">내 장바구니</a>
+        </li>
+        <li>
+            <a href="./newProduct.html">물품등록</a>
+        </li>
+        <li>
+            <a href="/">메인</a>
+        </li>
+    </ul>
+</nav>
+
+<h1>물품 등록</h1>
+<h2>물품 심사를 거쳐 물품을 등록할 수 있습니다</h2>
+
+<p>
+    <span>상품명</span>
+    <input id="productName" type="text">
+</p>
+
+<p>
+    <span>희망 가격</span>
+    <input id="productPrice" type="text">
+</p>
+
+<p>
+    <span>메뉴 선택</span>
+    <select id="menuSelect"></select>
+</p>
+
+<p>
+    <span>스트리머 태그</span>
+    <select id="streamerSelect"></select>
+</p>
+
+<p>
+    <span>상품 설명</span>
+    <textarea id="productDetails" name=""></textarea>
+</p>
+
+<p>
+    <span>판매자명</span>
+    <input id="productSeller" type="text">
+</p>
+
+<p>
+    수익의 일부를 스트리머에게 지급합니다. 동의하시겠습니까?
+    <p>
+        <span>예</span>
+        <input type="radio" name="agree" value="OK">
+    </p>
+    <p>
+        <span>아니오</span>
+        <input type="radio" name="agree" value="NO">
+    </p>
+</p>
+
+<button id="btnAddProduct">등록하기</button>
+
+<script src="./ajax.js"></script>
+
+<script>
+    const api = {
+        addProduct: function({name, price, menu_id, sub_menu_id, streamer_id, details, factory}) {
+            return new Promise((resolve, reject) => {
+                ajax.post(
+                    "/api/product",
+                    {name, price, menu_id, sub_menu_id, streamer_id, details, factory},
+                    res => {
+                        resolve(res);
+                    }
+                )
+            });
+        },
+        getMenus: function() {
+            return new Promise((resolve, reject) => {
+                ajax.get("/api/menu", res => {
+                    resolve(res);
+                });
+            })
+        },
+        getStreamers: function() {
+            return new Promise((resolve, reject) => {
+                ajax.get("/api/streamer", res => {
+                    resolve(res);
+                })
+            })
+        }
+    };
+</script>
+
+<script>
+    const userId = sessionStorage.getItem("userId");
+
+    init();
+
+    function init() {
+        setHandler();
+        getMenus();
+        getStreamers();
+    }
+
+    function setHandler() {
+        $("#btnAddProduct").on("click", addProduct);
+    }
+
+    async function getMenus() {
+        const res = await api.getMenus();
+        console.log(res);
+
+        updateSelect(res);
+    }
+
+    function updateSelect(menus) {
+        for(menu of menus) {
+            const option = document.createElement("option");
+            option.value = menu.id;
+            option.innerHTML = menu.name;
+            $("#menuSelect")[0].appendChild(option);
+        }
+    }
+
+    async function getStreamers() {
+        const res = await api.getStreamers();
+        console.log(res);
+
+        updateStreamerSelect(res);
+    }
+
+    function updateStreamerSelect(streamers) {
+        for(streamer of streamers) {
+            const option = document.createElement("option");
+            option.value = streamer.id;
+            option.innerHTML = streamer.name;
+            $("#streamerSelect")[0].appendChild(option);
+        }
+    }
+
+    async function addProduct() {
+        if($("input[name=agree]:checked").val() === "NO")
+            return alert("동의하지 않으면 물품을 등록할 수 없습니다");
+
+        const price = Number($("#productPrice").val());
+
+        const res = await api.addProduct({
+            name: $("#productName").val(),
+            price,
+            menu_id: $("#menuSelect").val(),
+            streamer_id: $("#streamerSelect").val(),
+            details: $("#productDetails").val(),
+            factory: $("#productSeller").val(),
+        });
+
+        console.log(res);
+        alert("물품을 등록했습니다");
+        location.href="/";
+    }
+
+</script>
+
+</body>
+</html>

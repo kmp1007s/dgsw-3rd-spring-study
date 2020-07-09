@@ -3,8 +3,8 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.webshop.Domain.ReviewMapper">
     <insert id="add" parameterType="com.example.webshop.Domain.Review">
-        insert into review(product_id, user_id, content, created, modified)
-        values(#{productId}, #{userId}, #{content}, #{created}, #{modified}})
+        insert into review(product_id, user_id, content)
+        values(#{product_id}, #{user_id}, #{content})
         <selectKey keyProperty="id" resultType="Long">
             select last_insert_id()
         </selectKey>
@@ -12,18 +12,16 @@
 
     <update id="modify" parameterType="com.example.webshop.Domain.Review">
         update review
-        set product_id=#{productId}, user_id=#{userId}, content=#{content}, created=#{created}, 
-        modified=#{modified}
+        set content=#{content}
         where id=#{id}
     </update>
 
     <delete id="deleteById" parameterType="Long">
-        update review
         delete from review
         where id=#{id}
     </delete>
 
-    <select id="findByProductId" parameterType="Long" resultType="com.example.webshop.Domain.Review">
+    <select id="findByProductId" parameterType="Long" resultType="HashMap">
         select r.id, r.product_id as product_id, r.user_id as user_id, u.account, r.content, r.created, r.modified
         from review r left join user u on r.user_id = u.id
         where product_id=#{productId}

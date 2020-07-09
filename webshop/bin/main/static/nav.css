@@ -1,0 +1,30 @@
+@charset "utf-8";
+
+#pageNav {
+    width: 100%;
+    float: left;
+    border-bottom: 1px solid #7f8184;
+}
+
+#nav {
+    padding: 0;
+    margin: 0;
+    padding: 16px;
+    float: right;
+}
+
+#nav > li {
+    list-style: none;
+    display: inline-block;
+    float: left;
+    padding: 8px;
+}
+
+#nav > li a {
+    text-decoration: none;
+    color: #7f8184;
+}
+
+#pageNav + * {
+    clear: both;
+}

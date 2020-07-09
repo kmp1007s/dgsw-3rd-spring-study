@@ -3,8 +3,8 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.webshop.Domain.UserMapper">
     <insert id="add" parameterType="com.example.webshop.Domain.User">
-        insert into user(accout, password, user_name, tel, phone, zip_code, address, email)
-        values(#{account}, #{password}, #{userName}, #{tel}, #{phone}, #{zipCode}, #{address}, #{email})
+        insert into user(account, password, user_name, tel, phone, zip_code, address, email)
+        values(#{account}, #{password}, #{user_name}, #{tel}, #{phone}, #{zip_code}, #{address}, #{email})
         <selectKey keyProperty="id" resultType="Long">
             select last_insert_id()
         </selectKey>
@@ -12,7 +12,7 @@
 
     <update id="modify" parameterType="com.example.webshop.Domain.User">
         update user
-        set password=#{password}, user_name=#{userName}, tel=#{tel}, phone=#{phone}, zip_code=#{zipCode}, address=#{address}, email=#{email}
+        set password=#{password}, user_name=#{user_name}, tel=#{tel}, phone=#{phone}, zip_code=#{zip_code}, address=#{address}, email=#{email}
         where id=#{id}
     </update>
 
@@ -32,7 +32,7 @@
         where id=#{id}
     </select>
     
-    <select id="findByAccount" parameterType="Long" resultType="com.example.webshop.Domain.User">
+    <select id="findByAccount" parameterType="String" resultType="com.example.webshop.Domain.User">
         select id, account, user_name, password, tel, phone, zip_code, address, email
         from user
         where account=#{account}

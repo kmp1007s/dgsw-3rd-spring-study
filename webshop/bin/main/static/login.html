@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8"/>
+    <title>쇼핑몰</title>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+</head>
+<style>
+    html, body {
+        height: 100%;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+    }
+
+    h1 {
+        text-align: center;
+        padding-top: 8%;
+    }
+
+    #loginInput {
+        position: relative;
+        width: 35%;
+        border: 1px solid #7f8184;
+        text-align: center;
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 16px 0;
+        border-radius: 6px;
+    }
+
+    #loginInput span {
+        display: inline-block;
+        min-width: 100px;
+    }
+
+    #btnLogin {
+        margin-top: 6px;
+    }
+
+    #notice {
+        text-align: center;
+    }
+</style>
+<body>
+<h1>로그인</h1>
+<p id="notice">쇼핑몰 이용을 위해 로그인합니다</p>
+<div id="loginInput">
+    <p>
+        <span>아이디</span>
+        <input id="inputLoginId" type="text"/>
+    </p>
+    <p>
+        <span>패스워드</span>
+        <input id="inputLoginPassword" type="password"/>
+    </p>
+    <button id="btnLogin">확인</button>
+</div>
+
+<script src="./ajax.js"></script>
+
+<script>
+    const api = {
+        login: function ({account, password}) {
+            return new Promise((resolve, reject) => {
+                ajax.post(
+                    "/api/user/login",
+                    {account, password},
+                    res => {
+                        resolve(res);
+                    }
+                );
+            });
+        }
+    };
+</script>
+
+<script>
+    init();
+
+    function init() {
+        setHandler();
+        setInputValue();
+    }
+
+    function setHandler() {
+        $("#btnLogin").on("click", login);
+    }
+
+    function setInputValue() {
+        $("#inputLoginId").val("root");
+        $("#inputLoginPassword").val("toor");
+    }
+
+    async function login() {
+        const res = await api.login({
+            account: $("#inputLoginId").val(),
+            password: $("#inputLoginPassword").val()
+        });
+
+        console.log(res);
+
+        if (res) {
+            alert("로그인 성공");
+            sessionStorage.setItem("userId", res.id);
+            location.href = "/";
+        } else {
+            alert("로그인 실패");
+        }
+    }
+</script>
+</body>
+</html>

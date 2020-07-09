@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>쇼핑몰</title>
+    <link rel="stylesheet" href="./cart.css">
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <link rel="stylesheet" href="./nav.css">
+</head>
+<body>
+<nav id="pageNav">
+    <ul id="nav">
+        <li>
+            <a href="./register.html">회원가입</a>
+        </li>
+        <li>
+            <a href="./login.html">로그인</a>
+        </li>
+        <li>
+            <a href="./cart.html">내 장바구니</a>
+        </li>
+        <li>
+            <a href="./newProduct.html">물품등록</a>
+        </li>
+        <li>
+            <a href="/">메인</a>
+        </li>
+    </ul>
+</nav>
+<div>
+    <h1>내 장바구니</h1>
+    <p>장바구니에 추가한 물품을 나열합니다</p>
+    <table id="cartTable">
+        <thead>
+        <tr>
+            <th>주문상품</th>
+            <th>가격</th>
+            <th>주문수</th>
+            <th>합계</th>
+            <th>삭제</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>
+
+            </td>
+            <td>
+
+            </td>
+            <td>
+
+            </td>
+            <td>
+
+            </td>
+            <td>
+                <button id="btnDeleteCart" onclick="deleteCart()">삭제하기</button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <p>
+        <span>주문 총가격: </span>
+        <span id="allTotal">0</span>
+        <span>원</span>
+    </p>
+    <p>
+        <button id="buttonShopping">쇼핑하기</button>
+        <button id="buttonPaying">주문하기</button>
+    </p>
+</div>
+
+<div id="modalContainer">
+    <div id="payModal">
+        <p>
+            <span>총 지불 금액: </span>
+            <span id="payTotal"></span>
+            <span>원</span>
+        </p>
+        <p>결제하시겠습니까?</p>
+        <button id="btnPayOK">확인</button>
+        <button id="btnPayCancel">취소</button>
+        <a id="textClosePay" href="#">닫기</a>
+    </div>
+</div>
+
+
+<script src="./ajax.js"></script>
+<script>
+    const api = {
+        findCartByUserId: function (userId) {
+            return new Promise((resolve, reject) => {
+                ajax.get(
+                    `/api/cart/user/${userId}`,
+                    res => {
+                        resolve(res);
+                    }
+                );
+            })
+        },
+        updateCartById: function ({id, amount, total}) {
+            return new Promise((resolve, reject) => {
+                ajax.put(
+                    "/api/cart",
+                    {id, amount, total},
+                    res => {
+                        resolve(res);
+                    }
+                );
+            })
+        },
+        deleteCartById: function (id) {
+            return new Promise((resolve, reject) => {
+                ajax.delete(
+                    `/api/cart/${id}`,
+                    res => {
+                        resolve(res);
+                    }
+                )
+            })
+        }
+    };
+</script>
+
+<script>
+    const userId = sessionStorage.getItem("userId");
+
+    init();
+
+    function init() {
+        getCarts();
+        setHandler();
+        $("#modalContainer").hide();
+    }
+
+    function setHandler() {
+        $("#buttonShopping").on("click", goIndex);
+        $("#buttonPaying").on("click", pay);
+        $("#btnPayOK").on("click", payOk);
+        $("#btnPayCancel").on("click", payCancel);
+        $("#textClosePay").on("click", payClose);
+    }
+
+    function goIndex() {
+        location.href = "/";
+    }
+
+    function pay() {
+        $("#modalContainer").show();
+    }
+
+    function payClose() {
+        $("#modalContainer").hide();
+    }
+
+    function payOk() {
+        const carts = $("#cartTable > tbody > tr");
+
+        carts.each(async (idx, item) => {
+            item = $(item);
+            const id = item.data("id");
+
+            // 삭제해야 할 엘리먼트면
+            if(id)
+                await api.deleteCartById(id);
+
+            if (idx === (carts.length - 1)) {
+                alert("결제가 완료되었습니다");
+                payClose();
+                getCarts();
+            }
+        });
+    }
+
+    function payCancel() {
+        payClose();
+    }
+
+    async function getCarts() {
+        const res = await api.findCartByUserId(userId);
+        console.log(res);
+
+        renderCartUI(res);
+    }
+
+    function renderCartUI(carts) {
+        const buttonRow = $("#cartTable tbody > tr:last-child");
+
+        $("#cartTable tbody > tr").remove();
+
+        for (let cart of carts) {
+            $("#cartTable tbody").append(`
+                <tr data-id="${cart.id}">
+                    <td>
+                        <span>${cart.productName}</span>
+                    </td>
+                    <td>
+                        <span class="cartPrice">${cart.price}</span>
+                    </td>
+                    <td>
+                        <input type="number" value="${cart.amount}" onkeyup="amountChange(${cart.id})" onmouseup="amountChange(${cart.id})">
+                    </td>
+                    <td>
+                        <span class="cartTotal">${cart.total}</span>
+                    </td>
+                    <td>
+                        <input type="checkbox" onclick="deleteCheck(${cart.id})">
+                    </td>
+                </tr>
+            `);
+        }
+
+        $("#cartTable tbody").append(buttonRow);
+
+        refreshAllTotal();
+    }
+
+    async function amountChange(id) {
+        console.log(id);
+
+        const item = $(`#cartTable tr[data-id="${id}"]`);
+        const price = item.find(".cartPrice")[0];
+        const amount = item.find("input[type=number]")[0];
+
+        const total = Number(price.innerHTML) * Number(amount.value);
+
+        const res = await api.updateCartById({
+            id,
+            total,
+            amount: Number(amount.value)
+        });
+        console.log(res);
+
+        item.find(".cartTotal")[0].innerHTML = total;
+
+        refreshAllTotal();
+    }
+
+    function deleteCheck(id) {
+        console.log(id);
+
+        const item = $(`#cartTable tr[data-id="${id}"]`);
+        const checkbox = item.find("input[type=checkbox]");
+
+        if (checkbox.is(":checked"))
+            item.attr("data-delete", "true");
+        else
+            item.removeAttr("data-delete");
+    }
+
+    function refreshAllTotal() {
+        let allTotal = 0;
+
+        $("#cartTable .cartTotal").each((idx, item) => {
+            allTotal += Number(item.innerHTML);
+        });
+
+        $("#allTotal")[0].innerHTML = allTotal;
+        $("#payTotal")[0].innerHTML = allTotal;
+    }
+
+    function deleteCart() {
+        const itemsToDelete = $("#cartTable tr[data-delete=true]");
+        console.log(itemsToDelete);
+
+        itemsToDelete.each((idx, item) => {
+            item = $(item);
+            const id = item.data("id");
+            api.deleteCartById(id).then(() => {
+                if (idx === (itemsToDelete.length - 1))
+                    getCarts();
+            });
+        });
+    }
+</script>
+
+</body>
+</html>
